@@ -1150,7 +1150,6 @@ class _CheckInPageState extends State<CheckInPage> {
                                     'dateTime': "$timeNow",
                                   }).then((value) {
                                     Navigator.pop(context);
-                                    Navigator.pop(context);
                                     checkDataFetchedActivity = false;
                                     showSnackBar(context, "Check In Submitted");
                                     _pageController.animateToPage(

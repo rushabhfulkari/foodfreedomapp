@@ -40,14 +40,14 @@ Widget buildDownloadDataList(
                           decoration: BoxDecoration(
                               color: veryDarkGrey2.withOpacity(0.45)),
                           child: Padding(
-                            padding: const EdgeInsets.all(10.0),
+                            padding: const EdgeInsets.all(15.0),
                             child: Row(
                               children: [
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Container(
-                                        width: width * 0.2,
+                                        width: width * 0.1,
                                         child: FadeInImage(
                                             placeholder: AssetImage(
                                               "assets/logo.png",
@@ -57,6 +57,7 @@ Widget buildDownloadDataList(
                                             )))
                                   ],
                                 ),
+                                SizedBox(width: 10),
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [

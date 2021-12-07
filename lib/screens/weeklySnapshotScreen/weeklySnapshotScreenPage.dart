@@ -2,11 +2,18 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:foodfreedomapp/constants/colors.dart';
 import 'package:foodfreedomapp/constants/widgets.dart';
+import 'package:foodfreedomapp/models/checkInModel.dart';
 import 'package:foodfreedomapp/models/emotionalTempModel.dart';
 import 'package:foodfreedomapp/models/emotionsModel.dart';
 import 'package:foodfreedomapp/models/focusOnModel.dart';
+import 'package:foodfreedomapp/screens/activityScreen/activityScreenServices.dart';
+import 'package:foodfreedomapp/screens/weeklySnapshotScreen/weeklySnapshotScreenConfigs.dart';
 import 'package:foodfreedomapp/screens/weeklySnapshotScreen/weeklySnapshotScreenWidgets.dart';
+import 'package:foodfreedomapp/services/userDetails.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
+bool checkDataFetchedWeekly = false;
 
 class WeeklySnapshaotPage extends StatefulWidget {
   @override
@@ -18,41 +25,167 @@ class _WeeklySnapshaotPageState extends State<WeeklySnapshaotPage> {
 
   DatabaseReference refFirebase = FirebaseDatabase.instance.reference();
 
-  List<EmotionalTemp> emotionalData = [
-    EmotionalTemp('Mon'.toUpperCase(), 'Amazing'),
-    EmotionalTemp('Tue'.toUpperCase(), 'Pretty Good'),
-    EmotionalTemp('Wed'.toUpperCase(), 'Somewhat Bad'),
-    EmotionalTemp('Thu'.toUpperCase(), 'Okay'),
-    EmotionalTemp(
-      'Fri'.toUpperCase(),
-      'Okay',
-    ),
-    EmotionalTemp(
-      'Sat'.toUpperCase(),
-      'Pretty Good',
-    ),
-    EmotionalTemp(
-      'Sun'.toUpperCase(),
-      'Somewhat Bad',
-    ),
-  ];
+  bool checkDataFetchedWeekly = false;
 
-  final List<Emotions> emotionsData = [
-    Emotions('Anxious', 25, palePink),
-    Emotions('Down', 38, moderateCyanLimeGreen),
-    Emotions('Tired', 34, veryLightBlue),
-    Emotions('Stressed', 52, slightlyDesaturatedViolet),
-    Emotions('Others', 52, softYellow)
-  ];
+  var listToShow = [];
 
-  final List<FocusOn> focusOnData = [
-    FocusOn('Myself', 25, darkCyanGreen),
-    FocusOn('Health', 38, palePink),
-    FocusOn('Food', 34, darkModerateBlue3),
-    FocusOn('Money', 52, slightlyDesaturatedViolet),
-    FocusOn('Others', 52, softYellow)
-  ];
+  List<EmotionalTemp> emotionalData;
 
+  List<Emotions> emotionsData;
+
+  List<FocusOn> focusOnData;
+
+  DateTime today = DateTime.now();
+
+  getDataWeeklySnapshot() {
+    if (!checkDataFetchedWeekly) {
+      refFirebase
+          .child('Users')
+          .child('$keyGlobal')
+          .child('CheckIn')
+          .orderByChild('dateTime')
+          .limitToLast(7)
+          .once()
+          .then((DataSnapshot checkInSnapshot) {
+        checkInListWeeklySnapshot =
+            getCheckInDataService(checkInSnapshot.value);
+
+        var endDay = Jiffy(today.toString()).format("EEE");
+
+        listToShow = graphData['$endDay'];
+
+        emotionalData = [
+          EmotionalTemp(
+              '${listToShow[0]}'.toUpperCase(),
+              returnGraphValueText(today
+                  .subtract(const Duration(days: 6))
+                  .toString()
+                  .substring(0, 10))),
+          EmotionalTemp(
+              '${listToShow[1]}'.toUpperCase(),
+              returnGraphValueText(today
+                  .subtract(const Duration(days: 5))
+                  .toString()
+                  .substring(0, 10))),
+          EmotionalTemp(
+              '${listToShow[2]}'.toUpperCase(),
+              returnGraphValueText(today
+                  .subtract(const Duration(days: 4))
+                  .toString()
+                  .substring(0, 10))),
+          EmotionalTemp(
+              '${listToShow[3]}'.toUpperCase(),
+              returnGraphValueText(today
+                  .subtract(const Duration(days: 3))
+                  .toString()
+                  .substring(0, 10))),
+          EmotionalTemp(
+              '${listToShow[4]}'.toUpperCase(),
+              returnGraphValueText(today
+                  .subtract(const Duration(days: 2))
+                  .toString()
+                  .substring(0, 10))),
+          EmotionalTemp(
+              '${listToShow[5]}'.toUpperCase(),
+              returnGraphValueText(today
+                  .subtract(const Duration(days: 1))
+                  .toString()
+                  .substring(0, 10))),
+          EmotionalTemp('${listToShow[6]}'.toUpperCase(),
+              returnGraphValueText(today.toString().substring(0, 10))),
+        ];
+
+        var doughnutGraphValueList;
+
+        var percentageValueAnxious = 0;
+        var percentageValueDown = 0;
+        var percentageValueTired = 0;
+        var percentageValueStressed = 0;
+        var percentageValueOthers = 0;
+
+        for (var i = 0; i < checkInListWeeklySnapshot.length; i++) {
+          if (daysBetween(
+                DateTime.parse(checkInListWeeklySnapshot[i].dateTime),
+                today,
+              ) <
+              7) {
+            if ('Anxious' ==
+                checkInListWeeklySnapshot[i].howDoYouFeelRightNow) {
+              percentageValueAnxious = percentageValueAnxious + 1;
+            } else if ('Down' ==
+                checkInListWeeklySnapshot[i].howDoYouFeelRightNow) {
+              percentageValueDown = percentageValueDown + 1;
+            } else if ('Tired' ==
+                checkInListWeeklySnapshot[i].howDoYouFeelRightNow) {
+              percentageValueTired = percentageValueTired + 1;
+            } else if ('Stressed' ==
+                checkInListWeeklySnapshot[i].howDoYouFeelRightNow) {
+              percentageValueStressed = percentageValueStressed + 1;
+            } else {
+              percentageValueOthers = percentageValueOthers + 1;
+            }
+          }
+        }
+
+        var additionOfAll = percentageValueAnxious +
+            percentageValueDown +
+            percentageValueTired +
+            percentageValueStressed +
+            percentageValueOthers;
+        doughnutGraphValueList = [
+          int.parse(((percentageValueAnxious / additionOfAll) * 100)
+              .toStringAsFixed(0)),
+          int.parse(
+              ((percentageValueDown / additionOfAll) * 100).toStringAsFixed(0)),
+          int.parse(((percentageValueTired / additionOfAll) * 100)
+              .toStringAsFixed(0)),
+          int.parse(((percentageValueStressed / additionOfAll) * 100)
+              .toStringAsFixed(0)),
+          int.parse(((percentageValueOthers / additionOfAll) * 100)
+              .toStringAsFixed(0)),
+        ];
+
+        emotionsData = [
+          Emotions('Anxious', doughnutGraphValueList[0], palePink),
+          Emotions('Down', doughnutGraphValueList[1], moderateCyanLimeGreen),
+          Emotions('Tired', doughnutGraphValueList[2], veryLightBlue),
+          Emotions(
+              'Stressed', doughnutGraphValueList[3], slightlyDesaturatedViolet),
+          Emotions('Others', doughnutGraphValueList[4], softYellow)
+        ];
+
+        focusOnData = [
+          FocusOn('Myself', 25, darkCyanGreen),
+          FocusOn('Health', 38, palePink),
+          FocusOn('Food', 34, darkModerateBlue3),
+          FocusOn('Money', 52, slightlyDesaturatedViolet),
+          FocusOn('Others', 52, softYellow)
+        ];
+      }).then((value) {
+        setState(() {
+          checkDataFetchedWeekly = true;
+        });
+      });
+    }
+  }
+
+  int daysBetween(DateTime from, DateTime to) {
+    from = DateTime(from.year, from.month, from.day);
+    to = DateTime(to.year, to.month, to.day);
+    return (to.difference(from).inHours / 24).round();
+  }
+
+  String returnGraphValueText(day) {
+    for (var i = 0; i < checkInListWeeklySnapshot.length; i++) {
+      if (day.toString() ==
+          checkInListWeeklySnapshot[i].dateTime.toString().substring(0, 10)) {
+        return checkInListWeeklySnapshot[i].howIsYourDay.toString();
+      }
+    }
+    return "";
+  }
+
+  // ignore: missing_return
   int returnValueInTermsOfEmotion(emotion) {
     if (emotion == "Amazing") {
       return 5;
@@ -65,28 +198,12 @@ class _WeeklySnapshaotPageState extends State<WeeklySnapshaotPage> {
     } else if (emotion == "Horrible") {
       return 1;
     }
-    return 3;
-  }
-
-  String returnValueInTermsOfInt(value) {
-    print(value);
-    if (value == 5) {
-      return "Amazing";
-    } else if (value == 4) {
-      return "Pretty Good";
-    } else if (value == 3) {
-      return "Okay";
-    } else if (value == 2) {
-      return "Somewhat Bad";
-    } else if (value == 1) {
-      return "Horrible";
-    }
-    return "Okay";
   }
 
   @override
   void initState() {
     super.initState();
+    getDataWeeklySnapshot();
   }
 
   @override
@@ -112,22 +229,23 @@ class _WeeklySnapshaotPageState extends State<WeeklySnapshaotPage> {
               ),
             ),
             child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Column(children: [
-                emotionalTempChart(),
-                SizedBox(
-                  height: 20,
-                ),
-                emotionsChart(),
-                SizedBox(
-                  height: 20,
-                ),
-                focusOnChart(),
-                SizedBox(
-                  height: 20,
-                ),
-              ]),
-            ),
+                physics: BouncingScrollPhysics(),
+                child: checkDataFetchedWeekly
+                    ? Column(children: [
+                        emotionalTempChart(),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        emotionsChart(),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        focusOnChart(),
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ])
+                    : buildCPIWidget(height, width)),
           )),
     );
   }
@@ -150,112 +268,107 @@ class _WeeklySnapshaotPageState extends State<WeeklySnapshaotPage> {
             SizedBox(
               height: 20,
             ),
-            Container(
-              height: height * 0.35,
-              width: width * 0.9,
-              child: SfCartesianChart(
-                  primaryXAxis: CategoryAxis(
-                    minorTicksPerInterval: 1,
-                    minorTickLines: MinorTickLines(color: white, width: 0),
-                    majorTickLines: MajorTickLines(color: white, width: 0),
-                    axisLine: AxisLine(
-                        color: white, width: 0, dashArray: <double>[0, 0]),
-                    minorGridLines: MinorGridLines(
-                        width: 0, color: vividCyan, dashArray: <double>[10, 5]),
-                    majorGridLines: MajorGridLines(
-                        width: 0, color: vividCyan, dashArray: <double>[10, 5]),
-                    labelStyle: TextStyle(
-                        color: vividCyan,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400),
-                  ),
-                  borderWidth: 0,
-                  borderColor: white,
-                  primaryYAxis: NumericAxis(
-                    interval: 1,
-                    labelFormat: '{value}',
-                    maximumLabels: 2,
-                    maximum: 5,
-                    minimum: 1,
-                    majorGridLines: MajorGridLines(
-                        width: 0.5,
-                        color: vividCyan,
-                        dashArray: <double>[10, 5]),
-                    minorTickLines: MinorTickLines(color: white, width: 0),
-                    majorTickLines: MajorTickLines(color: white, width: 0),
-                    placeLabelsNearAxisLine: true,
-                    axisLine: AxisLine(
-                        color: white, width: 0, dashArray: <double>[0, 0]),
-                    labelStyle: TextStyle(
-                        color: vividCyan,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  tooltipBehavior:
-                      TooltipBehavior(enable: true, color: desaturatedCyan),
-                  series: <ChartSeries<EmotionalTemp, String>>[
-                    LineSeries<EmotionalTemp, String>(
-                        dataSource: emotionalData,
-                        xAxisName: 'Days',
-                        enableTooltip: true,
-                        markerSettings: MarkerSettings(
-                          isVisible: true,
-                          borderWidth: 1,
-                          color: veryPaleCyan,
-                          height: 12,
-                          width: 12,
-                        ),
-                        yAxisName: 'Emotions',
-                        xValueMapper: (EmotionalTemp emotionalTemp, _) =>
-                            emotionalTemp.days,
-                        yValueMapper: (EmotionalTemp emotionalTemp, _) =>
-                            returnValueInTermsOfEmotion(emotionalTemp.emotions),
-                        name: 'Emotional Temperature',
-                        width: 3,
-                        color: vividCyan)
-                  ]),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Container(
-              width: width * 0.9,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      legendItem('amazing', '5: Amazing'),
-                      legendItem('prettygood', '4: Pretty Good'),
-                      legendItem('okay', '3: Okay'),
-                      legendItem('somewhatbad', '2: Somewhat Bad'),
-                      legendItem('horrible', '1: Horrible'),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: width * 0.4,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Legend",
-                              style: TextStyle(
-                                  color: black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
+            Stack(
+              children: [
+                Container(
+                  height: height * 0.35,
+                  width: width * 0.9,
+                  child: SfCartesianChart(
+                      primaryXAxis: CategoryAxis(
+                        minorTicksPerInterval: 1,
+                        minorTickLines: MinorTickLines(color: white, width: 0),
+                        majorTickLines: MajorTickLines(color: white, width: 0),
+                        axisLine: AxisLine(
+                            color: white, width: 0, dashArray: <double>[0, 0]),
+                        minorGridLines: MinorGridLines(
+                            width: 0,
+                            color: vividCyan,
+                            dashArray: <double>[10, 5]),
+                        majorGridLines: MajorGridLines(
+                            width: 0,
+                            color: vividCyan,
+                            dashArray: <double>[10, 5]),
+                        labelStyle: TextStyle(
+                            color: vividCyan,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400),
+                      ),
+                      borderWidth: 0,
+                      borderColor: white,
+                      primaryYAxis: NumericAxis(
+                        interval: 1,
+                        labelFormat: '       ',
+                        maximumLabels: 2,
+                        maximum: 5,
+                        minimum: 1,
+                        majorGridLines: MajorGridLines(
+                            width: 0.5,
+                            color: vividCyan,
+                            dashArray: <double>[10, 5]),
+                        minorTickLines: MinorTickLines(color: white, width: 0),
+                        majorTickLines: MajorTickLines(color: white, width: 0),
+                        placeLabelsNearAxisLine: true,
+                        axisLine: AxisLine(
+                            color: white, width: 0, dashArray: <double>[0, 0]),
+                        labelStyle: TextStyle(
+                            color: vividCyan,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      series: <ChartSeries<EmotionalTemp, String>>[
+                        LineSeries<EmotionalTemp, String>(
+                            dataSource: emotionalData,
+                            xAxisName: 'Days',
+                            markerSettings: MarkerSettings(
+                              isVisible: true,
+                              borderWidth: 1,
+                              color: veryPaleCyan,
+                              height: 12,
+                              width: 12,
                             ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
+                            yAxisName: 'Emotions',
+                            xValueMapper: (EmotionalTemp emotionalTemp, _) =>
+                                emotionalTemp.days,
+                            yValueMapper: (EmotionalTemp emotionalTemp, _) =>
+                                returnValueInTermsOfEmotion(
+                                    emotionalTemp.emotions),
+                            name: 'Emotional Temperature',
+                            width: 3,
+                            color: vividCyan)
+                      ]),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    legendItem('amazing'),
+                    SizedBox(
+                      height: height * 0.022,
+                    ),
+                    legendItem(
+                      'prettygood',
+                    ),
+                    SizedBox(
+                      height: height * 0.023,
+                    ),
+                    legendItem(
+                      'okay',
+                    ),
+                    SizedBox(
+                      height: height * 0.025,
+                    ),
+                    legendItem(
+                      'somewhatbad',
+                    ),
+                    SizedBox(
+                      height: height * 0.025,
+                    ),
+                    legendItem(
+                      'horrible',
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),

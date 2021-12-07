@@ -20,3 +20,4 @@ class CheckInModel {
 }
 
 var checkInList = [];
+var checkInListWeeklySnapshot = [];

@@ -19,6 +19,7 @@ class _SuggestAppFeaturePageState extends State<SuggestAppFeaturePage> {
   DatabaseReference refFirebase = FirebaseDatabase.instance.reference();
 
   TextEditingController _textController = TextEditingController();
+  final FocusNode _textFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -69,6 +70,7 @@ class _SuggestAppFeaturePageState extends State<SuggestAppFeaturePage> {
                     width,
                     context,
                     _textController,
+                    _textFocusNode,
                     "Write your suggestion here",
                     "Enter App Feature",
                   ),
@@ -87,6 +89,7 @@ class _SuggestAppFeaturePageState extends State<SuggestAppFeaturePage> {
                           context,
                           {
                             Navigator.pop(context),
+                            _textFocusNode.unfocus(),
                             showSnackBar(
                                 context, "App Feature Suggestion Submitted")
                           },

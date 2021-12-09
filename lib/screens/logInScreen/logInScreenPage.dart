@@ -5,7 +5,6 @@ import 'package:foodfreedomapp/constants/colors.dart';
 import 'package:foodfreedomapp/constants/configs.dart';
 import 'package:foodfreedomapp/constants/widgets.dart';
 import 'package:foodfreedomapp/screens/forgotPasswordScreen/forgotPasswordScreenPage.dart';
-import 'package:foodfreedomapp/screens/homeScreen/homeScreenPage.dart';
 import 'package:foodfreedomapp/screens/logInScreen/logInScreenWidgets.dart';
 import 'package:foodfreedomapp/screens/navigationBar/navigationBar.dart';
 import 'package:foodfreedomapp/screens/secureLogInScreen/secureLogInScreenPage.dart';
@@ -128,6 +127,8 @@ class _LogInPageState extends State<LogInPage> {
                         });
                         if (emailAndPasswordVerified) {
                           Navigator.pop(context);
+                          _emailFocusNode.unfocus();
+                          _passwordFocusNode.unfocus();
                           showSnackBar(context, "Logged In");
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
@@ -137,10 +138,14 @@ class _LogInPageState extends State<LogInPage> {
                           prefs.setBool('loggedIn', true);
                           prefs.setString('logInMethod', 'Normal');
                         } else {
+                          _emailFocusNode.unfocus();
+                          _passwordFocusNode.unfocus();
                           Navigator.pop(context);
                           showSnackBar(context, "Invalid Email or Password");
                         }
                       } else {
+                        _emailFocusNode.unfocus();
+                        _passwordFocusNode.unfocus();
                         Navigator.pop(context);
                         showSnackBar(context, "Invalid Email or Password");
                       }

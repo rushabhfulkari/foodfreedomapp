@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:foodfreedomapp/constants/colors.dart';
@@ -6,6 +7,7 @@ import 'package:foodfreedomapp/constants/widgets.dart';
 import 'package:foodfreedomapp/services/sendDataToFirebaseFromSettingsPage.dart';
 import 'package:foodfreedomapp/services/snackBar.dart';
 import 'package:foodfreedomapp/services/userDetails.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ResourcesPage extends StatefulWidget {
   @override
@@ -21,10 +23,11 @@ class _ResourcesPageState extends State<ResourcesPage> {
   bool checkBoxBool4 = false;
   bool checkBoxBool5 = false;
   bool checkBoxBool6 = false;
-  bool checkBoxBool7 = false;
-  bool checkBoxBool8 = false;
   bool other = false;
+  TextEditingController _otherTextController = TextEditingController();
+  final FocusNode _otherTextFocusNode = FocusNode();
   TextEditingController _textController = TextEditingController();
+  final FocusNode _textFocusNode = FocusNode();
   DatabaseReference refFirebase = FirebaseDatabase.instance.reference();
 
   @override
@@ -105,33 +108,116 @@ class _ResourcesPageState extends State<ResourcesPage> {
                           this.checkBoxBool6 = value;
                         });
                       }, this.checkBoxBool6),
-                      checkBoxTile("Food Freedom Tapping Facebook Community",
-                          (bool value) {
-                        setState(() {
-                          this.checkBoxBool7 = value;
-                        });
-                      }, this.checkBoxBool7),
-                      checkBoxTile("Food Freedom Tapping on Instagram",
-                          (bool value) {
-                        setState(() {
-                          this.checkBoxBool8 = value;
-                        });
-                      }, this.checkBoxBool8),
-                      checkBoxTile("Other", (bool value) {
+                      checkBoxTile("Something Else", (bool value) {
                         setState(() {
                           this.other = value;
                         });
                       }, this.other),
                       other
-                          ? textFormFieldWidgetSettingsPage(
+                          ? textFormFieldWidgetSettingsPageSmaller(
                               height,
                               width,
                               context,
-                              _textController,
-                              "Other",
+                              _otherTextController,
+                              _otherTextFocusNode,
+                              "Looking for something else? Let us know and we'll get back to you...",
                               "Enter a Resource",
                             )
                           : Container(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            height: 35,
+                            width: 35,
+                            child: MaterialButton(
+                              onPressed: () {
+                                launch(
+                                    'https://www.facebook.com/groups/foodfreedomtapping');
+                              },
+                              color: facebookBlue,
+                              child: Image.asset("assets/facebook.png"),
+                              padding: EdgeInsets.all(2),
+                              shape: CircleBorder(),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              launch(
+                                  'https://www.facebook.com/groups/foodfreedomtapping');
+                            },
+                            child: AutoSizeText(
+                              "Food Freedom Tapping Facebook Community",
+                              style: TextStyle(color: white),
+                              textAlign: TextAlign.left,
+                              maxFontSize: 14,
+                              minFontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            height: 35,
+                            width: 35,
+                            child: MaterialButton(
+                              onPressed: () {
+                                launch(
+                                    'https://www.instagram.com/foodfreedomtapping/');
+                              },
+                              color: Colors.transparent,
+                              child: Image.asset("assets/instagram.png"),
+                              padding: EdgeInsets.all(2),
+                              shape: CircleBorder(),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              launch(
+                                  'https://www.instagram.com/foodfreedomtapping/');
+                            },
+                            child: AutoSizeText(
+                              "Food Freedom Tapping on Instagram",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(color: white),
+                              maxFontSize: 14,
+                              minFontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      textFormFieldWidgetSettingsPage(
+                        height,
+                        width,
+                        context,
+                        _textController,
+                        _otherTextFocusNode,
+                        "Please explain in detail what you are looking for and we will be here to support you as best we can...",
+                        "Enter Details",
+                      ),
                       SizedBox(
                         height: 20,
                       ),
@@ -142,22 +228,25 @@ class _ResourcesPageState extends State<ResourcesPage> {
                             checkBoxBool4 ||
                             checkBoxBool5 ||
                             checkBoxBool6 ||
-                            checkBoxBool7 ||
-                            checkBoxBool8 ||
                             other) {
-                          sendDataToFirebaseFromSettingsPage(
-                              firstNameGlobal,
-                              lastNameGlobal,
-                              returnResourceText(),
-                              emailGlobal,
-                              phoneNumberGlobal,
-                              refFirebase,
-                              context,
-                              {
-                                Navigator.pop(context),
-                                showSnackBar(context, "Details Subbmitted")
-                              },
-                              "Resources");
+                          if (_formKey.currentState.validate()) {
+                            sendDataToFirebaseFromSettingsPage(
+                                firstNameGlobal,
+                                lastNameGlobal,
+                                returnResourceText() +
+                                    "${_textController.text}",
+                                emailGlobal,
+                                phoneNumberGlobal,
+                                refFirebase,
+                                context,
+                                {
+                                  Navigator.pop(context),
+                                  _textFocusNode.unfocus(),
+                                  _otherTextFocusNode.unfocus(),
+                                  showSnackBar(context, "Details Subbmitted")
+                                },
+                                "Resources");
+                          }
                         } else {
                           showSnackBar(
                               context, "Please Select atleast one Resource");
@@ -191,19 +280,14 @@ class _ResourcesPageState extends State<ResourcesPage> {
       text = text + "Weight Neutral Personal Trainer//";
     }
     if (checkBoxBool5) {
-      text = text + "Intuitive Eating Coach";
+      text = text + "Intuitive Eating Coach//";
     }
     if (checkBoxBool6) {
-      text = text + "Anti-diet Doctor";
+      text = text + "Anti-diet Doctor//";
     }
-    if (checkBoxBool7) {
-      text = text + "Food Freedom Tapping Facebook Community";
-    }
-    if (checkBoxBool8) {
-      text = text + "Food Freedom Tapping on Instagram";
-    }
+
     if (other) {
-      text = text + "${_textController.text}";
+      text = text + "${_otherTextController.text}" + "//";
     }
 
     return text;

@@ -17,7 +17,7 @@ Container appSettingsOptions(
           Container(
               width: width * 0.4,
               child: autoSizeTextWidget(
-                  "$title", white, "", FontWeight.w400, 16.0)),
+                  "$title", white, "Raleway", FontWeight.w400, 14.0)),
           SizedBox(
             width: 10,
           ),

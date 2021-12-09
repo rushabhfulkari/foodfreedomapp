@@ -20,6 +20,7 @@ class _ReportAProblemPageState extends State<ReportAProblemPage> {
   DatabaseReference refFirebase = FirebaseDatabase.instance.reference();
 
   TextEditingController _textController = TextEditingController();
+  final FocusNode _textFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -70,6 +71,7 @@ class _ReportAProblemPageState extends State<ReportAProblemPage> {
                     width,
                     context,
                     _textController,
+                    _textFocusNode,
                     "Write your problem here",
                     "Enter a Problem",
                   ),
@@ -88,6 +90,7 @@ class _ReportAProblemPageState extends State<ReportAProblemPage> {
                           context,
                           {
                             Navigator.pop(context),
+                            _textFocusNode.unfocus(),
                             showSnackBar(context, "Problem Reported")
                           },
                           "Problems Reported");

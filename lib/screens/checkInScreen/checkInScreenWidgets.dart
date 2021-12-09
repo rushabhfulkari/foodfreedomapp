@@ -66,16 +66,14 @@ ButtonStyle selectButtonStyle4() {
   );
 }
 
-ButtonStyle selectButtonStyle5(stringTotalWhatMakesYouFeel, text) {
+ButtonStyle selectButtonStyle5(index, clickedIndex) {
   return ButtonStyle(
     backgroundColor: MaterialStateProperty.all<Color>(black.withOpacity(0.3)),
     side: MaterialStateProperty.all(
       BorderSide(
-        color: stringTotalWhatMakesYouFeel.toString().contains('$text')
-            ? white
-            : Colors.transparent,
+        color: clickedIndex == index ? white : Colors.transparent,
         style: BorderStyle.solid,
-        width: stringTotalWhatMakesYouFeel.toString().contains('$text') ? 2 : 0,
+        width: clickedIndex == index ? 2 : 0,
       ),
     ),
     shape: MaterialStateProperty.all(
@@ -133,7 +131,8 @@ ButtonStyle selectButtonStyle8() {
   );
 }
 
-Widget titleTextField(size, context, controller, validatorText, hintText) {
+Widget titleTextField(
+    size, context, controller, focusNode, validatorText, hintText) {
   return Container(
     width: size.width * 0.95,
     child: Padding(
@@ -149,6 +148,7 @@ Widget titleTextField(size, context, controller, validatorText, hintText) {
               }
             },
             controller: controller,
+            focusNode: focusNode,
             scrollPadding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
@@ -186,7 +186,7 @@ Widget titleTextField(size, context, controller, validatorText, hintText) {
   );
 }
 
-InkWell iAlsoFeelButton(onPressed, text, index, iAlsoFeelIndex) {
+InkWell iAlsoFeelButton(onPressed, text, bool) {
   return InkWell(
     onTap: onPressed,
     child: Container(
@@ -194,9 +194,8 @@ InkWell iAlsoFeelButton(onPressed, text, index, iAlsoFeelIndex) {
           color: black.withOpacity(0.3),
           borderRadius: BorderRadius.all(Radius.circular(20)),
           border: Border.all(
-            color:
-                iAlsoFeelIndex == index ? darkModerateBlue : Colors.transparent,
-            width: iAlsoFeelIndex == index ? 2 : 0,
+            color: bool ? darkModerateBlue : Colors.transparent,
+            width: bool ? 2 : 0,
             style: BorderStyle.solid,
           )),
       child: Padding(
@@ -260,12 +259,12 @@ Column lastPageWhatMakesYouFeelWidget(pngName, text) {
   );
 }
 
-Column whatMakesYouFeelWidget(onPressed, pngName, text, whatMakesYouFeel) {
+Column whatMakesYouFeelWidget(onPressed, pngName, text, index, clickedIndex) {
   return Column(
     children: [
       TextButton(
           onPressed: onPressed,
-          style: selectButtonStyle5(whatMakesYouFeel, '$text'),
+          style: selectButtonStyle5(index, clickedIndex),
           child: Stack(
             children: [
               ClipRRect(
@@ -333,23 +332,21 @@ String returnAppBarText(howIsYourDayIndex) {
   return "";
 }
 
-List returnLastPageWhatMakesYouFeelData(
-    whatMakesYouFeelData, whatMakesYouFeel) {
-  List tempList = [];
+Map returnLastPageWhatMakesYouFeelData(whatMakesYouFeelData, whatMakesYouFeel) {
+  Map temp = {};
   if (whatMakesYouFeel != "") {
     for (var i = 0; i < whatMakesYouFeelData['name'].length; i++) {
-      if (whatMakesYouFeel
-          .toString()
-          .contains(whatMakesYouFeelData['name'][i])) {
-        tempList.add({
+      if (whatMakesYouFeel.toString() == "${whatMakesYouFeelData['name']}") {
+        print('${whatMakesYouFeelData['image'][i]}');
+        temp = {
           'name': '${whatMakesYouFeelData['name'][i]}',
           'image': '${whatMakesYouFeelData['image'][i]}'
-        });
+        };
       }
     }
-    return tempList;
+    return temp;
   }
-  return tempList;
+  return temp;
 }
 
 ElevatedButton buttonRegularCheckIn(onPressed, buttonText) {

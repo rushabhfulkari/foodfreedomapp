@@ -114,7 +114,12 @@ class _SeeAllPageState extends State<SeeAllPage> {
                                     ],
                                   ),
                                 )
-                              : noDataDoundWidget(height)
+                              : noDataDoundWidget(
+                                  height,
+                                  width,
+                                  category == "Favorites"
+                                      ? "Looks like you haven’t marked any content as a favorite yet."
+                                      : "No Data Found")
                           : buildCPIWidget(height, width)
                     ],
                   ),

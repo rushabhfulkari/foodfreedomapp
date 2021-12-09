@@ -120,36 +120,59 @@ class _CustomizeTappingPageState extends State<CustomizeTappingPage> {
                       SizedBox(
                         height: 20,
                       ),
-                      Row(
-                        children: [
-                          bgMusicWidget('birds', () {
-                            setState(() {
-                              bgMusicSelected = 0;
-                            });
-                          },
-                              0,
-                              bgMusicSelected,
-                              height,
-                              width,
-                              darkModerateBlue.withOpacity(0.8),
-                              strongRed.withOpacity(0.8),
-                              "Birds"),
-                          SizedBox(
-                            width: 20,
+                      Container(
+                        width: width,
+                        child: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              bgMusicWidget('birds', () {
+                                setState(() {
+                                  bgMusicSelected = 0;
+                                });
+                              },
+                                  0,
+                                  bgMusicSelected,
+                                  height,
+                                  width,
+                                  darkModerateBlue.withOpacity(0.8),
+                                  strongRed.withOpacity(0.8),
+                                  "Birds"),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              bgMusicWidget('rain', () {
+                                setState(() {
+                                  bgMusicSelected = 1;
+                                });
+                              },
+                                  1,
+                                  bgMusicSelected,
+                                  height,
+                                  width,
+                                  moderateCyanLimeGreen.withOpacity(0.8),
+                                  veryDarkDesaturatedCyanLimeGreen
+                                      .withOpacity(0),
+                                  "Rain"),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              bgMusicWidget('rain', () {
+                                setState(() {
+                                  bgMusicSelected = 2;
+                                });
+                              },
+                                  2,
+                                  bgMusicSelected,
+                                  height,
+                                  width,
+                                  darkModerateBlue.withOpacity(0.8),
+                                  strongRed.withOpacity(0.8),
+                                  "No Music"),
+                            ],
                           ),
-                          bgMusicWidget('rain', () {
-                            setState(() {
-                              bgMusicSelected = 1;
-                            });
-                          },
-                              1,
-                              bgMusicSelected,
-                              height,
-                              width,
-                              moderateCyanLimeGreen.withOpacity(0.8),
-                              veryDarkDesaturatedCyanLimeGreen.withOpacity(0),
-                              "Rain"),
-                        ],
+                        ),
                       ),
                       SizedBox(
                         height: 60,

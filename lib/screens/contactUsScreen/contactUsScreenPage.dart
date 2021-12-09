@@ -18,6 +18,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   final _formKey = new GlobalKey<FormState>();
 
   TextEditingController _textController = TextEditingController();
+  final FocusNode _textFocusNode = FocusNode();
 
   DatabaseReference refFirebase = FirebaseDatabase.instance.reference();
 
@@ -70,6 +71,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     width,
                     context,
                     _textController,
+                    _textFocusNode,
                     "Write your message here",
                     "Enter Something",
                   ),
@@ -88,6 +90,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           context,
                           {
                             Navigator.pop(context),
+                            _textFocusNode.unfocus(),
                             showSnackBar(context, "Details Submitted")
                           },
                           "Contact Us");

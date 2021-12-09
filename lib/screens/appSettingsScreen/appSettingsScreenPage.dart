@@ -79,7 +79,7 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
               height,
               width,
               "reminder.png",
-              "Tapping Reminder",
+              "Daily Tapping Reminders",
               context,
               Switch(
                 value: isSwitchedTappingReminder,

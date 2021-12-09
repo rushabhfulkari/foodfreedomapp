@@ -4,6 +4,7 @@ import 'package:foodfreedomapp/constants/colors.dart';
 import 'package:foodfreedomapp/constants/configs.dart';
 import 'package:foodfreedomapp/constants/styles.dart';
 import 'package:foodfreedomapp/screens/settingScreen/settingScreenPage.dart';
+import 'package:foodfreedomapp/services/share.dart';
 import 'package:lottie/lottie.dart';
 
 Container containerBackgroundLinearGradient(
@@ -225,6 +226,7 @@ Widget textFormFieldWidgetSettingsPage(
   width,
   context,
   controller,
+  focusNode,
   hintText,
   validatorText,
 ) {
@@ -243,6 +245,7 @@ Widget textFormFieldWidgetSettingsPage(
               }
             },
             controller: controller,
+            focusNode: focusNode,
             scrollPadding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
@@ -272,6 +275,70 @@ Widget textFormFieldWidgetSettingsPage(
             ),
             textInputAction: TextInputAction.next,
             maxLines: 8,
+            onEditingComplete: () {
+              FocusScope.of(context).unfocus();
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget textFormFieldWidgetSettingsPageSmaller(
+  height,
+  width,
+  context,
+  controller,
+  focusNode,
+  hintText,
+  validatorText,
+) {
+  return Container(
+    width: width * 0.95,
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          TextFormField(
+            validator: (value) {
+              if (value.isEmpty) {
+                return "$validatorText";
+              } else {
+                return null;
+              }
+            },
+            controller: controller,
+            focusNode: focusNode,
+            scrollPadding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            keyboardType: TextInputType.text,
+            cursorWidth: ((0.067 * height) / 100),
+            cursorColor: Colors.grey,
+            style: TextStyle(
+              fontSize: ((2.032 * height) / 100),
+              color: white,
+            ),
+            decoration: InputDecoration(
+              disabledBorder: buildTextFieldOutlineInputBorder(height),
+              focusedBorder: buildTextFieldOutlineInputBorder(height),
+              errorBorder: buildTextFieldOutlineInputBorder(height),
+              focusedErrorBorder: buildTextFieldOutlineInputBorder(height),
+              border: buildTextFieldOutlineInputBorder(height),
+              enabledBorder: buildTextFieldOutlineInputBorder(height),
+              contentPadding: EdgeInsets.only(
+                left: ((1.896 * height) / 100),
+                top: ((1.896 * height) / 100),
+                right: ((1.896 * height) / 100),
+              ),
+              filled: true,
+              fillColor: blackTextBox,
+              hintText: "$hintText",
+              hintStyle: hintTextStyle,
+            ),
+            textInputAction: TextInputAction.next,
+            maxLines: 2,
             onEditingComplete: () {
               FocusScope.of(context).unfocus();
             },
@@ -494,8 +561,18 @@ class GradientAppBar extends StatelessWidget {
                       onPressed: () {
                         Navigator.pop(context);
                       })
-                  : Container(
-                      width: width * 0.1,
+                  : CircleAvatar(
+                      child: IconButton(
+                          icon: Icon(
+                            Icons.share,
+                            color: white,
+                            size: 25.0,
+                          ),
+                          onPressed: () {
+                            share(
+                                'Download The Food Freedom App from Play Store : https://play.google.com/store/apps/details?id=com.bt.foodfreedomapp');
+                          }),
+                      backgroundColor: black.withOpacity(0.25),
                     ),
               Container(
                 width: width * 0.6,
@@ -774,17 +851,17 @@ void confirmDialogue(context, text, description, onYes, onNo) {
       });
 }
 
-Widget noDataDoundWidget(height) {
+Widget noDataDoundWidget(height, width, text) {
   return Center(
       child: Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Container(
         height: height * 0.7,
-        width: 200,
+        width: width * 0.8,
         child: Center(
           child: Text(
-            "No Data Found",
+            "$text",
             textAlign: TextAlign.center,
             style: TextStyle(color: white, fontSize: 20),
           ),

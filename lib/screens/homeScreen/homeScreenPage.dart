@@ -59,7 +59,9 @@ class _HomePageState extends State<HomePage>
       affirmation = "";
     }
     if (checkInDone == null) {
-      checkInDone = "false";
+      setState(() {
+        checkInDone = "false";
+      });
     }
     if (dayToday == null || dayToday != "${DateTime.now().day}".toString()) {
       dayToday = "${DateTime.now().day}".toString();
@@ -67,7 +69,7 @@ class _HomePageState extends State<HomePage>
       prefs.setString('checkInDone', "false");
       getAffirmations();
     } else {
-      print(affirmation.toString() + "affirmation else");
+      // print(affirmation.toString() + "affirmation else");
     }
   }
 
@@ -129,139 +131,154 @@ class _HomePageState extends State<HomePage>
                         height: defaultPadding * 0.1,
                       ),
                       dataFetched
-                          ? Column(
-                              children: [
-                                assetImage(
-                                    height, width, 'assets/logo.png', 0.1, 1),
-                                Container(
-                                  width: width * 0.8,
-                                  child: AutoSizeText(
-                                    "$affirmation",
-                                    maxFontSize: 40,
-                                    minFontSize: 25,
-                                    maxLines: 3,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: veryDarkOrange,
-                                        fontSize: 40.0,
-                                        fontFamily: 'Pattaya',
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                SizedBox(height: height * 0.06),
-                                homePageButtons(
-                                    size.height,
-                                    size.width,
-                                    () {},
-                                    darkViolet.withOpacity(0.6),
-                                    strongBlue.withOpacity(0.36),
-                                    "assets/tv.png",
-                                    "Food Freedom Tapping 101"),
-                                homePageButtons(size.height, size.width, () {
-                                  tappingDataFetched = false;
-                                  Navigator.pushReplacement(
-                                    context,
-                                    PageRouteBuilder(
-                                      pageBuilder:
-                                          (context, animation1, animation2) =>
-                                              NavigationBar(
-                                        indexSent: 1,
+                          ? Container(
+                              height: height * 0.817,
+                              child: SingleChildScrollView(
+                                physics: AlwaysScrollableScrollPhysics(),
+                                child: Column(
+                                  children: [
+                                    assetImage(height, width, 'assets/logo.png',
+                                        0.1, 1),
+                                    Container(
+                                      width: width * 0.8,
+                                      child: AutoSizeText(
+                                        "$affirmation",
+                                        maxFontSize: 30,
+                                        minFontSize: 25,
+                                        maxLines: 5,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: veryDarkOrange,
+                                            fontSize: 40.0,
+                                            fontFamily: 'Pattaya',
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      transitionDuration: Duration.zero,
                                     ),
-                                  );
-                                },
-                                    orangeDesaturated.withOpacity(0.6),
-                                    orangeDesaturated.withOpacity(0.6),
-                                    "assets/tapping.png",
-                                    "Tapping"),
-                                homePageButtons(size.height, size.width, () {
-                                  if (checkInDone == "false") {
-                                    Navigator.of(context)
-                                        .push(
-                                      MaterialPageRoute(
-                                        builder: (context) => CheckInPage(),
-                                      ),
-                                    )
-                                        .then((value) {
-                                      checkInDone = "true";
-                                    });
-                                  } else {
-                                    showSnackBar(context,
-                                        "Today's Emotional Check-In is Done, Please Come Back Tomorrow");
-                                  }
-                                },
-                                    strongBlue2.withOpacity(0.6),
-                                    blueDark.withOpacity(0.6),
-                                    "assets/smile.png",
-                                    "Your Emotional Check-In"),
-                                homePageButtons(size.height, size.width, () {
-                                  if (favoritesList.toString() != "[]") {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => SeeAllPage(
-                                          category: "Favorites",
-                                          favoritesList: favoritesList,
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    favoritesList.clear();
-                                    refFirebase
-                                        .child('Tapping Data')
-                                        .limitToFirst(200)
-                                        .orderByChild('dateAdded')
-                                        .once()
-                                        .then((DataSnapshot tappingSnapshot) {
-                                      tappingSnapshot.value
-                                          .forEach((keyTapping, valueTapping) {
-                                        if (favouriteString
-                                            .contains('$keyTapping')) {
-                                          favoritesList.add(tappingDataServices(
-                                              valueTapping, keyTapping));
-                                        }
-                                      });
-                                    }).then((value) {
+                                    SizedBox(height: height * 0.03),
+                                    homePageButtons(
+                                        size.height,
+                                        size.width,
+                                        () {},
+                                        darkViolet.withOpacity(0.6),
+                                        strongBlue.withOpacity(0.36),
+                                        "assets/tv.png",
+                                        "Food Freedom Tapping 101"),
+                                    homePageButtons(size.height, size.width,
+                                        () {
                                       tappingDataFetched = false;
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => SeeAllPage(
-                                            category: "Favorites",
-                                            favoritesList: favoritesList,
+                                      Navigator.pushReplacement(
+                                        context,
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation1,
+                                                  animation2) =>
+                                              NavigationBar(
+                                            indexSent: 1,
                                           ),
+                                          transitionDuration: Duration.zero,
                                         ),
                                       );
-                                    });
-                                  }
-                                },
-                                    vividPink.withOpacity(0.6),
-                                    brightPink.withOpacity(0.252),
-                                    "assets/heart.png",
-                                    "Favorites"),
-                                homePageButtons(size.height, size.width, () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => DownloadListPage(),
-                                    ),
-                                  );
-                                },
-                                    blueDark.withOpacity(0.8),
-                                    blueDark.withOpacity(0.48),
-                                    "assets/download.png",
-                                    "Downloaded"),
-                                homePageButtons(size.height, size.width, () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          WeeklySnapshaotPage(),
-                                    ),
-                                  );
-                                },
-                                    vividPink.withOpacity(0.6),
-                                    brightPink.withOpacity(0.252),
-                                    "assets/graph.png",
-                                    "Weekly Snapshot"),
-                              ],
+                                    },
+                                        orangeDesaturated.withOpacity(0.6),
+                                        orangeDesaturated.withOpacity(0.6),
+                                        "assets/tapping.png",
+                                        "Tapping"),
+                                    homePageButtons(size.height, size.width,
+                                        () {
+                                      if (checkInDone == "false") {
+                                        Navigator.of(context)
+                                            .push(
+                                          MaterialPageRoute(
+                                            builder: (context) => CheckInPage(),
+                                          ),
+                                        )
+                                            .then((value) {
+                                          checkInDone = "true";
+                                        });
+                                      } else {
+                                        showSnackBar(context,
+                                            "Today's Emotional Check-In is Done, Please Come Back Tomorrow");
+                                      }
+                                    },
+                                        strongBlue2.withOpacity(0.6),
+                                        blueDark.withOpacity(0.6),
+                                        "assets/smile.png",
+                                        "Your Emotional Check-In"),
+                                    homePageButtons(size.height, size.width,
+                                        () {
+                                      if (favoritesList.toString() != "[]") {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => SeeAllPage(
+                                              category: "Favorites",
+                                              favoritesList: favoritesList,
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        favoritesList.clear();
+                                        refFirebase
+                                            .child('Tapping Data')
+                                            .limitToFirst(200)
+                                            .orderByChild('dateAdded')
+                                            .once()
+                                            .then(
+                                                (DataSnapshot tappingSnapshot) {
+                                          tappingSnapshot.value.forEach(
+                                              (keyTapping, valueTapping) {
+                                            if (favouriteString
+                                                .contains('$keyTapping')) {
+                                              favoritesList.add(
+                                                  tappingDataServices(
+                                                      valueTapping,
+                                                      keyTapping));
+                                            }
+                                          });
+                                        }).then((value) {
+                                          tappingDataFetched = false;
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) => SeeAllPage(
+                                                category: "Favorites",
+                                                favoritesList: favoritesList,
+                                              ),
+                                            ),
+                                          );
+                                        });
+                                      }
+                                    },
+                                        vividPink.withOpacity(0.6),
+                                        brightPink.withOpacity(0.252),
+                                        "assets/heart.png",
+                                        "Favorites"),
+                                    homePageButtons(size.height, size.width,
+                                        () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              DownloadListPage(),
+                                        ),
+                                      );
+                                    },
+                                        blueDark.withOpacity(0.8),
+                                        blueDark.withOpacity(0.48),
+                                        "assets/download.png",
+                                        "Downloaded"),
+                                    homePageButtons(size.height, size.width,
+                                        () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              WeeklySnapshaotPage(),
+                                        ),
+                                      );
+                                    },
+                                        vividPink.withOpacity(0.6),
+                                        brightPink.withOpacity(0.252),
+                                        "assets/graph.png",
+                                        "Weekly Snapshot"),
+                                  ],
+                                ),
+                              ),
                             )
                           : buildCPIWidget(height, width)
                     ],

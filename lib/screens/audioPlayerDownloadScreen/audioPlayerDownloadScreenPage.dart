@@ -105,7 +105,7 @@ class _AudioPlayerDownloadPageState extends State<AudioPlayerDownloadPage> {
         bgMusicPlayer = await bgMusicCachePlayer.loop("birdsound.mp3");
       } else if (bgMusicName == "1") {
         bgMusicPlayer = await bgMusicCachePlayer.loop("rainsound.mp3");
-      }
+      } else if (bgMusicName == "2") {}
       bgMusicPlayer.setVolume(0.25);
     } catch (e) {
       print(e.toString());

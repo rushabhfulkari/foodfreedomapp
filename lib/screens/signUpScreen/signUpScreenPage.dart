@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:foodfreedomapp/constants/colors.dart';
 import 'package:foodfreedomapp/constants/configs.dart';
 import 'package:foodfreedomapp/constants/widgets.dart';
-import 'package:foodfreedomapp/screens/homeScreen/homeScreenPage.dart';
 import 'package:foodfreedomapp/screens/navigationBar/navigationBar.dart';
 import 'package:foodfreedomapp/screens/signUpScreen/signUpScreenServices.dart';
 import 'package:foodfreedomapp/screens/signUpScreen/signUpScreenWidgets.dart';
@@ -106,6 +105,38 @@ class _SignUpPageState extends State<SignUpPage> {
                       _passwordFocusNode, () {
                     _toggle();
                   }, _obscureText),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: size.width * 0.87,
+                        child: RichText(
+                          text: TextSpan(
+                            children: const <TextSpan>[
+                              TextSpan(
+                                  text: 'Password requires minimum ',
+                                  style: TextStyle(
+                                    color: white,
+                                    fontSize: 14,
+                                    fontFamily: 'Raleway',
+                                  )),
+                              TextSpan(
+                                  text:
+                                      '1 Uppercase, 1 Lowercase, 1 Numeric Number & 1 Special Character ( ! @ # \$ & * ~ )',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      fontFamily: 'Raleway',
+                                      color: slightlyDesaturatedBlue)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   SizedBox(
                     height: 10,
                   ),
@@ -218,6 +249,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                   keyGlobal = newkey.toString(),
                                   prefs.setBool('loggedIn', true),
                                   prefs.setString('logInMethod', 'Normal'),
+                                  _firstNameFocusNode.unfocus(),
+                                  _lastNameFocusNode.unfocus(),
+                                  _phoneNumberFocusNode.unfocus(),
+                                  _emailFocusNode.unfocus(),
+                                  _passwordFocusNode.unfocus(),
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
                                       builder: (context) => NavigationBar(),

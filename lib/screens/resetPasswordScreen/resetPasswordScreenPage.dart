@@ -243,6 +243,38 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               _toggle();
             }, _obscureText, "Enter New password", "Re-Enter New password"),
             SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: size.width * 0.87,
+                  child: RichText(
+                    text: TextSpan(
+                      children: const <TextSpan>[
+                        TextSpan(
+                            text: 'Password requires minimum ',
+                            style: TextStyle(
+                              color: white,
+                              fontSize: 14,
+                              fontFamily: 'Raleway',
+                            )),
+                        TextSpan(
+                            text:
+                                '1 Uppercase, 1 Lowercase, 1 Numeric Number & 1 Special Character ( ! @ # \$ & * ~ )',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                fontFamily: 'Raleway',
+                                color: slightlyDesaturatedBlue)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
               height: defaultPadding * 10,
             ),
             buttonRegular(() {

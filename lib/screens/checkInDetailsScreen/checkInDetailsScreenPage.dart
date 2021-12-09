@@ -23,8 +23,23 @@ class CheckInDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List dataHere = returnLastPageWhatMakesYouFeelData(
-        whatMakesYouFeelData, checkInObject.whatMakesYouFeel);
+    Map temp = {};
+    if (checkInObject.whatMakesYouFeel != "") {
+      for (var i = 0; i < whatMakesYouFeelData['name'].length; i++) {
+        if (checkInObject.whatMakesYouFeel.toString() ==
+            "${whatMakesYouFeelData['name'][i]}") {
+          print('${whatMakesYouFeelData['image'][i]}');
+          temp = {
+            'name': '${whatMakesYouFeelData['name'][i]}',
+            'image': '${whatMakesYouFeelData['image'][i]}'
+          };
+        }
+      }
+    }
+
+    var array = checkInObject.iAlsoFeel.split('//');
+    array.remove('');
+
     Size size = MediaQuery.of(context).size;
     width = size.width;
     height = size.height;
@@ -93,18 +108,20 @@ class CheckInDetailsPage extends StatelessWidget {
                       SizedBox(
                         height: 5,
                       ),
-                      Container(
-                        width: width * 0.85,
-                        child: AutoSizeText(
-                          "${checkInObject.thoughts}",
-                          textAlign: TextAlign.start,
-                          maxFontSize: 18,
-                          style: TextStyle(
-                              color: white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
+                      checkInObject.thoughts.toString() != ""
+                          ? Container(
+                              width: width * 0.85,
+                              child: AutoSizeText(
+                                "${checkInObject.thoughts}",
+                                textAlign: TextAlign.start,
+                                maxFontSize: 18,
+                                style: TextStyle(
+                                    color: white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )
+                          : Container(),
                       SizedBox(
                         height: 40,
                       ),
@@ -145,32 +162,44 @@ class CheckInDetailsPage extends StatelessWidget {
                         height: 5,
                       ),
                       Container(
-                        width: width * 0.85,
-                        child: AutoSizeText(
-                          "${checkInObject.iAlsoFeel}",
-                          textAlign: TextAlign.start,
-                          maxFontSize: 18,
-                          style: TextStyle(
-                              color: white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
+                        height: array.length * height * 0.03,
+                        child: ListView.builder(
+                            itemCount: array.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 5.0),
+                                child: Container(
+                                  width: width * 0.85,
+                                  child: AutoSizeText(
+                                    "${array[index]}",
+                                    textAlign: TextAlign.start,
+                                    maxFontSize: 18,
+                                    style: TextStyle(
+                                        color: white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              );
+                            }),
                       ),
                       SizedBox(
                         height: 5,
                       ),
-                      Container(
-                        width: width * 0.85,
-                        child: AutoSizeText(
-                          "${checkInObject.iAlsoFeelText}",
-                          textAlign: TextAlign.start,
-                          maxFontSize: 18,
-                          style: TextStyle(
-                              color: white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
+                      checkInObject.iAlsoFeelText.toString() != ""
+                          ? Container(
+                              width: width * 0.85,
+                              child: AutoSizeText(
+                                "${checkInObject.iAlsoFeelText}",
+                                textAlign: TextAlign.start,
+                                maxFontSize: 18,
+                                style: TextStyle(
+                                    color: white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )
+                          : Container(),
                       SizedBox(
                         height: 20,
                       ),
@@ -178,25 +207,12 @@ class CheckInDetailsPage extends StatelessWidget {
                       SizedBox(
                         height: 10,
                       ),
-                      Container(
-                        height: dataHere.length * 100.0,
-                        child: ListView.builder(
-                            itemCount: dataHere.length,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return Row(
-                                children: [
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.only(bottom: 20.0),
-                                    child: lastPageWhatMakesYouFeelWidget(
-                                      "${dataHere[index]['image']}",
-                                      "${dataHere[index]['name']}",
-                                    ),
-                                  )
-                                ],
-                              );
-                            }),
+                      lastPageWhatMakesYouFeelWidget(
+                        "${temp['image']}",
+                        "${temp['name']}",
+                      ),
+                      SizedBox(
+                        height: 40,
                       ),
                     ],
                   ),

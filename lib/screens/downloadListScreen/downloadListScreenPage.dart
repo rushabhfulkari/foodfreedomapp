@@ -97,7 +97,8 @@ class _DownloadListPageState extends State<DownloadListPage> {
                                     ],
                                   ),
                                 )
-                              : noDataDoundWidget(height)
+                              : noDataDoundWidget(height, width,
+                                  "Looks like you haven’t downloaded any content yet.")
                           : buildCPIWidget(height, width)
                     ],
                   ),

@@ -140,7 +140,11 @@ Widget passwordFieldForgotPassword(title, size, context, passwordController,
               } else if (value.length < 8) {
                 return "Password length should not be less than 8";
               } else {
-                return null;
+                if (!regexPassword.hasMatch(value)) {
+                  return "Minimum 1 Uppercase, 1 Numeric Number & 1 Special Character required";
+                } else {
+                  return null;
+                }
               }
             },
             controller: passwordController,

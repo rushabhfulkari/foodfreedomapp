@@ -210,8 +210,9 @@ class _TappingDetailsPageState extends State<TappingDetailsPage> {
                                     }),
                                     buttonOptions("assets/share.png", "Share",
                                         () {
-                                      share(
-                                          "The Shared Content is ${tappingDetailsObject.title} by ${tappingDetailsObject.authorName}");
+                                      share("The Shared Content is ${tappingDetailsObject.title} by ${tappingDetailsObject.authorName}" +
+                                          "\n\n" +
+                                          "Download Food Freedom Tapping App on Playstore : https://play.google.com/store/apps/details?id=com.bt.foodfreedomapp");
                                     }),
                                   ],
                                 ),

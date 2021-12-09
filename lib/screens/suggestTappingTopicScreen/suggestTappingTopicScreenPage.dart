@@ -18,6 +18,7 @@ class _SuggestTappingTopicPageState extends State<SuggestTappingTopicPage> {
   final _formKey = new GlobalKey<FormState>();
 
   TextEditingController _textController = TextEditingController();
+  final FocusNode _textFocusNode = FocusNode();
   DatabaseReference refFirebase = FirebaseDatabase.instance.reference();
 
   @override
@@ -70,6 +71,7 @@ class _SuggestTappingTopicPageState extends State<SuggestTappingTopicPage> {
                     width,
                     context,
                     _textController,
+                    _textFocusNode,
                     "Write your suggestion here",
                     "Enter Tapping Topic",
                   ),
@@ -88,6 +90,7 @@ class _SuggestTappingTopicPageState extends State<SuggestTappingTopicPage> {
                           context,
                           {
                             Navigator.pop(context),
+                            _textFocusNode.unfocus(),
                             showSnackBar(
                                 context, "Tapping Topic Suggestion Submitted")
                           },

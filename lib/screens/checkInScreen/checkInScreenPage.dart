@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -28,17 +29,20 @@ class _CheckInPageState extends State<CheckInPage> {
   PageController _pageController = PageController();
   double howIsYourDayIndex = 2.0;
   int checkInPage1Index = 0;
-  int iAlsoFeelIndex = 0;
-  String whatMakesYouFeel = '';
+  String iAlsoFeelText = '';
+  int whatMakesYouFeelIndex = 0;
 
   SharedPreferences prefs;
 
   TextEditingController _titleController = TextEditingController();
+  final FocusNode _titleFocusNode = FocusNode();
   TextEditingController _thoughtsController = TextEditingController();
+  final FocusNode _thoughtsFocusNode = FocusNode();
 
   final _formKeyIAlsoFeel = new GlobalKey<FormState>();
 
   TextEditingController _iAlsoFeelTextController = TextEditingController();
+  final FocusNode _iAlsoFeelTextFocusNode = FocusNode();
 
   var timeNow;
 
@@ -53,24 +57,38 @@ class _CheckInPageState extends State<CheckInPage> {
     getSharedPref();
   }
 
+  // ignore: missing_return
+  Future<bool> onWillPop() {
+    confirmDialogue(context, "Go Back", "All the data will be lost?", () {
+      Navigator.pop(context);
+      Navigator.pop(context);
+    }, () {
+      Navigator.pop(context);
+    });
+    // return exit(0);
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    return Scaffold(
-        body: SafeArea(
-      child: PageView(
-          controller: _pageController,
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            checkInPage0(size),
-            checkInPage1(size),
-            checkInPage2(size),
-            checkInPage3(size),
-            checkInPage4(size),
-            checkInPage5(size),
-          ]),
-    ));
+    return WillPopScope(
+      onWillPop: onWillPop,
+      child: Scaffold(
+          body: SafeArea(
+        child: PageView(
+            controller: _pageController,
+            physics: NeverScrollableScrollPhysics(),
+            children: <Widget>[
+              checkInPage0(size),
+              checkInPage1(size),
+              checkInPage2(size),
+              checkInPage3(size),
+              checkInPage4(size),
+              checkInPage5(size),
+            ]),
+      )),
+    );
   }
 
   Scaffold checkInPage0(Size size) {
@@ -154,20 +172,21 @@ class _CheckInPageState extends State<CheckInPage> {
             Center(
               child: Container(
                 height: height * 0.55,
-                width: width * 0.4,
+                width: width * 0.9,
                 child: Container(
                   child: assetImage(
                     height,
                     width,
-                    "assets/emotionalthermometer.png",
+                    "assets/emotionalthermometerwithwords.png",
                     0.55,
-                    0.4,
+                    0.9,
                   ),
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: width * 0.12, top: height * 0.048),
+              padding:
+                  EdgeInsets.only(right: width * 0.154, top: height * 0.048),
               child: Container(
                 height: height * 0.4,
                 child: SfSlider.vertical(
@@ -600,36 +619,58 @@ class _CheckInPageState extends State<CheckInPage> {
                             itemCount: iAlsoFeel.length,
                             itemBuilder: (BuildContext context, int index) {
                               return iAlsoFeelButton(() {
-                                if (iAlsoFeelIndex != index) {
+                                if (iAlsoFeelText != "") {
+                                  if (!iAlsoFeelText
+                                      .contains("${iAlsoFeel[index]}")) {
+                                    setState(() {
+                                      iAlsoFeelText = iAlsoFeelText +
+                                          "${iAlsoFeel[index]}//";
+                                    });
+                                  } else {
+                                    setState(() {
+                                      iAlsoFeelText = iAlsoFeelText.replaceAll(
+                                          "${iAlsoFeel[index]}//", "");
+                                    });
+                                  }
+                                } else {
                                   setState(() {
-                                    iAlsoFeelIndex = index;
+                                    iAlsoFeelText =
+                                        iAlsoFeelText + "${iAlsoFeel[index]}//";
                                   });
                                 }
-                              }, "${iAlsoFeel[index]}", index, iAlsoFeelIndex);
+                              },
+                                  "${iAlsoFeel[index]}",
+                                  iAlsoFeelText
+                                      .contains("${iAlsoFeel[index]}"));
                             }),
                       ),
                       SizedBox(height: 20),
                       Form(
                         key: _formKeyIAlsoFeel,
-                        child: textFormFieldWidgetSettingsPage(
+                        child: textFormFieldWidgetSettingsPageSmaller(
                           size.height,
                           size.width,
                           context,
                           _iAlsoFeelTextController,
-                          "Enter How You Feel",
+                          _iAlsoFeelTextFocusNode,
+                          "or enter your own feeling...",
                           "Enter how you feel",
                         ),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: size.height * 0.15),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 40.0),
                         child: buttonRegularCheckIn(() {
-                          if (_formKeyIAlsoFeel.currentState.validate()) {
+                          _iAlsoFeelTextFocusNode.unfocus();
+                          if (iAlsoFeelText != "") {
                             _pageController.animateToPage(
                               3,
                               duration: const Duration(milliseconds: 400),
                               curve: Curves.easeInOut,
                             );
+                          } else {
+                            showSnackBar(
+                                context, "Please Select Atleast One Option");
                           }
                         }, "Continue"),
                       )
@@ -720,83 +761,44 @@ class _CheckInPageState extends State<CheckInPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       whatMakesYouFeelWidget(() {
-                        if (whatMakesYouFeel != "") {
-                          if (!whatMakesYouFeel
-                              .contains(whatMakesYouFeelData['name'][0])) {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel +
-                                  "${whatMakesYouFeelData['name'][0]}//";
-                            });
-                          } else {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel.replaceAll(
-                                  "${whatMakesYouFeelData['name'][0]}//", "");
-                            });
-                          }
-                        } else {
+                        if (whatMakesYouFeelIndex != 0) {
                           setState(() {
-                            whatMakesYouFeel = whatMakesYouFeel +
-                                "${whatMakesYouFeelData['name'][0]}//";
+                            whatMakesYouFeelIndex = 0;
                           });
                         }
                       },
                           "${whatMakesYouFeelData['image'][0]}",
                           "${whatMakesYouFeelData['name'][0]}",
-                          whatMakesYouFeel),
+                          0,
+                          whatMakesYouFeelIndex),
                       SizedBox(
                         width: defaultPadding * 0.6,
                       ),
                       whatMakesYouFeelWidget(() {
-                        if (whatMakesYouFeel != "") {
-                          if (!whatMakesYouFeel
-                              .contains(whatMakesYouFeelData['name'][1])) {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel +
-                                  "${whatMakesYouFeelData['name'][1]}//";
-                            });
-                          } else {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel.replaceAll(
-                                  "${whatMakesYouFeelData['name'][1]}//", "");
-                            });
-                          }
-                        } else {
+                        if (whatMakesYouFeelIndex != 1) {
                           setState(() {
-                            whatMakesYouFeel = whatMakesYouFeel +
-                                "${whatMakesYouFeelData['name'][1]}//";
+                            whatMakesYouFeelIndex = 1;
                           });
                         }
                       },
                           "${whatMakesYouFeelData['image'][1]}",
                           "${whatMakesYouFeelData['name'][1]}",
-                          whatMakesYouFeel),
+                          1,
+                          whatMakesYouFeelIndex),
                       SizedBox(
                         width: defaultPadding * 0.6,
                       ),
                       whatMakesYouFeelWidget(() {
-                        if (whatMakesYouFeel != "") {
-                          if (!whatMakesYouFeel
-                              .contains(whatMakesYouFeelData['name'][2])) {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel +
-                                  "${whatMakesYouFeelData['name'][2]}//";
-                            });
-                          } else {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel.replaceAll(
-                                  "${whatMakesYouFeelData['name'][2]}//", "");
-                            });
-                          }
-                        } else {
+                        if (whatMakesYouFeelIndex != 2) {
                           setState(() {
-                            whatMakesYouFeel = whatMakesYouFeel +
-                                "${whatMakesYouFeelData['name'][2]}//";
+                            whatMakesYouFeelIndex = 2;
                           });
                         }
                       },
                           "${whatMakesYouFeelData['image'][2]}",
                           "${whatMakesYouFeelData['name'][2]}",
-                          whatMakesYouFeel),
+                          2,
+                          whatMakesYouFeelIndex),
                     ],
                   ),
                   SizedBox(
@@ -806,83 +808,44 @@ class _CheckInPageState extends State<CheckInPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       whatMakesYouFeelWidget(() {
-                        if (whatMakesYouFeel != "") {
-                          if (!whatMakesYouFeel
-                              .contains(whatMakesYouFeelData['name'][3])) {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel +
-                                  "${whatMakesYouFeelData['name'][3]}//";
-                            });
-                          } else {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel.replaceAll(
-                                  "${whatMakesYouFeelData['name'][3]}//", "");
-                            });
-                          }
-                        } else {
+                        if (whatMakesYouFeelIndex != 3) {
                           setState(() {
-                            whatMakesYouFeel = whatMakesYouFeel +
-                                "${whatMakesYouFeelData['name'][3]}//";
+                            whatMakesYouFeelIndex = 3;
                           });
                         }
                       },
                           "${whatMakesYouFeelData['image'][3]}",
                           "${whatMakesYouFeelData['name'][3]}",
-                          whatMakesYouFeel),
+                          3,
+                          whatMakesYouFeelIndex),
                       SizedBox(
                         width: defaultPadding * 0.6,
                       ),
                       whatMakesYouFeelWidget(() {
-                        if (whatMakesYouFeel != "") {
-                          if (!whatMakesYouFeel
-                              .contains(whatMakesYouFeelData['name'][4])) {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel +
-                                  "${whatMakesYouFeelData['name'][4]}//";
-                            });
-                          } else {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel.replaceAll(
-                                  "${whatMakesYouFeelData['name'][4]}//", "");
-                            });
-                          }
-                        } else {
+                        if (whatMakesYouFeelIndex != 4) {
                           setState(() {
-                            whatMakesYouFeel = whatMakesYouFeel +
-                                "${whatMakesYouFeelData['name'][4]}//";
+                            whatMakesYouFeelIndex = 4;
                           });
                         }
                       },
                           "${whatMakesYouFeelData['image'][4]}",
                           "${whatMakesYouFeelData['name'][4]}",
-                          whatMakesYouFeel),
+                          4,
+                          whatMakesYouFeelIndex),
                       SizedBox(
                         width: defaultPadding * 0.6,
                       ),
                       whatMakesYouFeelWidget(() {
-                        if (whatMakesYouFeel != "") {
-                          if (!whatMakesYouFeel
-                              .contains(whatMakesYouFeelData['name'][5])) {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel +
-                                  "${whatMakesYouFeelData['name'][5]}//";
-                            });
-                          } else {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel.replaceAll(
-                                  "${whatMakesYouFeelData['name'][5]}//", "");
-                            });
-                          }
-                        } else {
+                        if (whatMakesYouFeelIndex != 5) {
                           setState(() {
-                            whatMakesYouFeel = whatMakesYouFeel +
-                                "${whatMakesYouFeelData['name'][5]}//";
+                            whatMakesYouFeelIndex = 5;
                           });
                         }
                       },
                           "${whatMakesYouFeelData['image'][5]}",
                           "${whatMakesYouFeelData['name'][5]}",
-                          whatMakesYouFeel),
+                          5,
+                          whatMakesYouFeelIndex),
                     ],
                   ),
                   SizedBox(
@@ -892,83 +855,44 @@ class _CheckInPageState extends State<CheckInPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       whatMakesYouFeelWidget(() {
-                        if (whatMakesYouFeel != "") {
-                          if (!whatMakesYouFeel
-                              .contains(whatMakesYouFeelData['name'][6])) {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel +
-                                  "${whatMakesYouFeelData['name'][6]}//";
-                            });
-                          } else {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel.replaceAll(
-                                  "${whatMakesYouFeelData['name'][6]}//", "");
-                            });
-                          }
-                        } else {
+                        if (whatMakesYouFeelIndex != 6) {
                           setState(() {
-                            whatMakesYouFeel = whatMakesYouFeel +
-                                "${whatMakesYouFeelData['name'][6]}//";
+                            whatMakesYouFeelIndex = 6;
                           });
                         }
                       },
                           "${whatMakesYouFeelData['image'][6]}",
                           "${whatMakesYouFeelData['name'][6]}",
-                          whatMakesYouFeel),
+                          6,
+                          whatMakesYouFeelIndex),
                       SizedBox(
                         width: defaultPadding * 0.6,
                       ),
                       whatMakesYouFeelWidget(() {
-                        if (whatMakesYouFeel != "") {
-                          if (!whatMakesYouFeel
-                              .contains(whatMakesYouFeelData['name'][7])) {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel +
-                                  "${whatMakesYouFeelData['name'][7]}//";
-                            });
-                          } else {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel.replaceAll(
-                                  "${whatMakesYouFeelData['name'][7]}//", "");
-                            });
-                          }
-                        } else {
+                        if (whatMakesYouFeelIndex != 7) {
                           setState(() {
-                            whatMakesYouFeel = whatMakesYouFeel +
-                                "${whatMakesYouFeelData['name'][7]}//";
+                            whatMakesYouFeelIndex = 7;
                           });
                         }
                       },
                           "${whatMakesYouFeelData['image'][7]}",
                           "${whatMakesYouFeelData['name'][7]}",
-                          whatMakesYouFeel),
+                          7,
+                          whatMakesYouFeelIndex),
                       SizedBox(
                         width: defaultPadding * 0.6,
                       ),
                       whatMakesYouFeelWidget(() {
-                        if (whatMakesYouFeel != "") {
-                          if (!whatMakesYouFeel
-                              .contains(whatMakesYouFeelData['name'][8])) {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel +
-                                  "${whatMakesYouFeelData['name'][8]}//";
-                            });
-                          } else {
-                            setState(() {
-                              whatMakesYouFeel = whatMakesYouFeel.replaceAll(
-                                  "${whatMakesYouFeelData['name'][8]}//", "");
-                            });
-                          }
-                        } else {
+                        if (whatMakesYouFeelIndex != 8) {
                           setState(() {
-                            whatMakesYouFeel = whatMakesYouFeel +
-                                "${whatMakesYouFeelData['name'][8]}//";
+                            whatMakesYouFeelIndex = 8;
                           });
                         }
                       },
                           "${whatMakesYouFeelData['image'][8]}",
                           "${whatMakesYouFeelData['name'][8]}",
-                          whatMakesYouFeel),
+                          8,
+                          whatMakesYouFeelIndex),
                     ],
                   ),
                 ],
@@ -979,15 +903,11 @@ class _CheckInPageState extends State<CheckInPage> {
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 40.0),
                   child: buttonRegularCheckIn(() {
-                    if (whatMakesYouFeel != "") {
-                      _pageController.animateToPage(
-                        4,
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.easeInOut,
-                      );
-                    } else {
-                      showSnackBar(context, "Select atleast one of the option");
-                    }
+                    _pageController.animateToPage(
+                      4,
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeInOut,
+                    );
                   }, "Continue"),
                 ))
           ],
@@ -997,8 +917,6 @@ class _CheckInPageState extends State<CheckInPage> {
   }
 
   Scaffold checkInPage4(Size size) {
-    List dataHere = returnLastPageWhatMakesYouFeelData(
-        whatMakesYouFeelData, whatMakesYouFeel);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
@@ -1017,158 +935,153 @@ class _CheckInPageState extends State<CheckInPage> {
                 width: size.width,
                 child: SingleChildScrollView(
                   physics: AlwaysScrollableScrollPhysics(),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 65,
-                          decoration: BoxDecoration(),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              IconButton(
-                                  icon: Icon(
-                                    Icons.arrow_back,
-                                    color: white,
-                                    size: 25.0,
-                                  ),
-                                  onPressed: () {
-                                    confirmDialogue(context, "Go Back",
-                                        "All the data will be lost?", () {
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
-                                    }, () {
-                                      Navigator.pop(context);
-                                    });
-                                  }),
-                              SizedBox(
-                                width: size.width * 0.25,
-                              ),
-                              Text("Check-Ins",
-                                  style: TextStyle(color: white, fontSize: 22))
-                            ],
-                          ),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 65,
+                        decoration: BoxDecoration(),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            IconButton(
+                                icon: Icon(
+                                  Icons.arrow_back,
+                                  color: white,
+                                  size: 25.0,
+                                ),
+                                onPressed: () {
+                                  confirmDialogue(context, "Go Back",
+                                      "All the data will be lost?", () {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  }, () {
+                                    Navigator.pop(context);
+                                  });
+                                }),
+                            SizedBox(
+                              width: size.width * 0.25,
+                            ),
+                            Text("Check-Ins",
+                                style: TextStyle(color: white, fontSize: 22))
+                          ],
                         ),
-                        SizedBox(
-                          height: defaultPadding * 1,
-                        ),
-                        AutoSizeText(
-                          "${Jiffy(timeNow).format("EEEE,  dd MMM,  h:mm a")}"
-                              .toUpperCase(),
-                          maxLines: 1,
-                          style: TextStyle(
-                              color: white,
-                              fontSize: 20.0,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w400),
-                        ),
-                        SizedBox(
-                          height: defaultPadding * 3,
-                        ),
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(left: 20.0, right: 20.0),
-                          child: Column(
-                            children: [
-                              Row(
+                      ),
+                      SizedBox(
+                        height: defaultPadding * 1,
+                      ),
+                      AutoSizeText(
+                        "${Jiffy(timeNow).format("EEEE,  dd MMM,  h:mm a")}"
+                            .toUpperCase(),
+                        maxLines: 1,
+                        style: TextStyle(
+                            color: white,
+                            fontSize: 20.0,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400),
+                      ),
+                      SizedBox(
+                        height: defaultPadding * 3,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                lastPageOptionWidget(
+                                    () {},
+                                    "${returnHowWasYourDayText(int.parse(howIsYourDayIndex.toStringAsFixed(0)))}"
+                                        .replaceAll(" ", "")
+                                        .toLowerCase(),
+                                    "${returnHowWasYourDayText(int.parse(howIsYourDayIndex.toStringAsFixed(0)))}",
+                                    int.parse(
+                                        howIsYourDayIndex.toStringAsFixed(0)),
+                                    0),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            lastPageWhatMakesYouFeelWidget(
+                              "${whatMakesYouFeelData['image'][whatMakesYouFeelIndex]}",
+                              "${whatMakesYouFeelData['name'][whatMakesYouFeelIndex]}",
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Form(
+                              key: _formKey,
+                              child: Column(
                                 children: [
-                                  lastPageOptionWidget(
-                                      () {},
-                                      "${returnHowWasYourDayText(int.parse(howIsYourDayIndex.toStringAsFixed(0)))}"
-                                          .replaceAll(" ", "")
-                                          .toLowerCase(),
-                                      "${returnHowWasYourDayText(int.parse(howIsYourDayIndex.toStringAsFixed(0)))}",
-                                      int.parse(
-                                          howIsYourDayIndex.toStringAsFixed(0)),
-                                      0),
+                                  titleTextField(
+                                      size,
+                                      context,
+                                      _titleController,
+                                      _titleFocusNode,
+                                      "Enter Title",
+                                      "Add a Title"),
                                 ],
                               ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Container(
-                                height: dataHere.length * 100.0,
-                                child: ListView.builder(
-                                    itemCount: dataHere.length,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) {
-                                      return Row(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 20.0),
-                                            child:
-                                                lastPageWhatMakesYouFeelWidget(
-                                              "${dataHere[index]['image']}",
-                                              "${dataHere[index]['name']}",
-                                            ),
-                                          )
-                                        ],
-                                      );
-                                    }),
-                              ),
-                              titleTextField(size, context, _titleController,
-                                  "Enter Title", "Add a Title"),
-                              textFormFieldWidgetSettingsPage(
-                                size.height,
-                                size.width,
-                                context,
-                                _thoughtsController,
-                                "Add more thoughts",
-                                "Enter Something",
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              buttonRegularCheckIn(() {
-                                if (_formKey.currentState.validate()) {
-                                  buildCPI(context);
-                                  prefs.setString('checkInDone', "true");
-                                  var dataCheckInTemp = dataCheckIn[
-                                      returnHowWasYourDayText(int.parse(
-                                          howIsYourDayIndex
-                                              .toStringAsFixed(0)))];
-                                  refFirebase
-                                      .child('Users')
-                                      .child('$keyGlobal')
-                                      .child('CheckIn')
-                                      .push()
-                                      .set({
-                                    'howIsYourDay':
-                                        '${returnHowWasYourDayText(int.parse(howIsYourDayIndex.toStringAsFixed(0)))}',
-                                    'howDoYouFeelRightNow':
-                                        '${dataCheckInTemp['name'][checkInPage1Index]}',
-                                    'iAlsoFeel': '${iAlsoFeel[iAlsoFeelIndex]}',
-                                    'iAlsoFeelText': _iAlsoFeelTextController
-                                        .text
-                                        .toString(),
-                                    'whatMakesYouFeel': '$whatMakesYouFeel',
-                                    'title': _titleController.text.toString(),
-                                    'thoughts':
-                                        _thoughtsController.text.toString(),
-                                    'dateTime': "$timeNow",
-                                  }).then((value) {
-                                    Navigator.pop(context);
-                                    checkDataFetchedActivity = false;
-                                    showSnackBar(context, "Check In Submitted");
-                                    _pageController.animateToPage(
-                                      5,
-                                      duration:
-                                          const Duration(milliseconds: 400),
-                                      curve: Curves.easeInOut,
-                                    );
-                                  });
-                                }
-                              }, "Continue"),
-                              SizedBox(
-                                height: 50,
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                            ),
+                            textFormFieldWidgetSettingsPage(
+                              size.height,
+                              size.width,
+                              context,
+                              _thoughtsController,
+                              _thoughtsFocusNode,
+                              "Add more thoughts",
+                              "Enter Something",
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            buttonRegularCheckIn(() {
+                              if (_formKey.currentState.validate()) {
+                                _titleFocusNode.unfocus();
+                                _thoughtsFocusNode.unfocus();
+                                buildCPI(context);
+                                prefs.setString('checkInDone', "true");
+                                var dataCheckInTemp = dataCheckIn[
+                                    returnHowWasYourDayText(int.parse(
+                                        howIsYourDayIndex.toStringAsFixed(0)))];
+                                refFirebase
+                                    .child('Users')
+                                    .child('$keyGlobal')
+                                    .child('CheckIn')
+                                    .push()
+                                    .set({
+                                  'howIsYourDay':
+                                      '${returnHowWasYourDayText(int.parse(howIsYourDayIndex.toStringAsFixed(0)))}',
+                                  'howDoYouFeelRightNow':
+                                      '${dataCheckInTemp['name'][checkInPage1Index]}',
+                                  'iAlsoFeel': '$iAlsoFeelText',
+                                  'iAlsoFeelText':
+                                      _iAlsoFeelTextController.text.toString(),
+                                  'whatMakesYouFeel':
+                                      "${whatMakesYouFeelData['name'][whatMakesYouFeelIndex]}",
+                                  'title': _titleController.text.toString(),
+                                  'thoughts':
+                                      _thoughtsController.text.toString(),
+                                  'dateTime': "$timeNow",
+                                }).then((value) {
+                                  Navigator.pop(context);
+                                  checkDataFetchedActivity = false;
+                                  showSnackBar(context, "Check In Submitted");
+                                  _pageController.animateToPage(
+                                    5,
+                                    duration: const Duration(milliseconds: 400),
+                                    curve: Curves.easeInOut,
+                                  );
+                                });
+                              }
+                            }, "Continue"),
+                            SizedBox(
+                              height: 50,
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
                 ),
               ),

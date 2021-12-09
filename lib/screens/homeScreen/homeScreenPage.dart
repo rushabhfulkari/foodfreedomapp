@@ -205,15 +205,20 @@ class _HomePageState extends State<HomePage>
                                         "Your Emotional Check-In"),
                                     homePageButtons(size.height, size.width,
                                         () {
+                                      buildCPI(context);
                                       if (favoritesList.toString() != "[]") {
-                                        Navigator.of(context).push(
+                                        Navigator.of(context)
+                                            .push(
                                           MaterialPageRoute(
                                             builder: (context) => SeeAllPage(
                                               category: "Favorites",
                                               favoritesList: favoritesList,
                                             ),
                                           ),
-                                        );
+                                        )
+                                            .then((value) {
+                                          Navigator.pop(context);
+                                        });
                                       } else {
                                         favoritesList.clear();
                                         refFirebase
@@ -235,14 +240,18 @@ class _HomePageState extends State<HomePage>
                                           });
                                         }).then((value) {
                                           tappingDataFetched = false;
-                                          Navigator.of(context).push(
+                                          Navigator.of(context)
+                                              .push(
                                             MaterialPageRoute(
                                               builder: (context) => SeeAllPage(
                                                 category: "Favorites",
                                                 favoritesList: favoritesList,
                                               ),
                                             ),
-                                          );
+                                          )
+                                              .then((value) {
+                                            Navigator.pop(context);
+                                          });
                                         });
                                       }
                                     },

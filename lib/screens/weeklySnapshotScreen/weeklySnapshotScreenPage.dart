@@ -154,12 +154,64 @@ class _WeeklySnapshaotPageState extends State<WeeklySnapshaotPage> {
           Emotions('Others', doughnutGraphValueList[4], softYellow)
         ];
 
+        var radialGraphValueList;
+
+        var percentageValueMyslef = 0;
+        var percentageValueHealth = 0;
+        var percentageValueFood = 0;
+        var percentageValueMoney = 0;
+        var percentageValueOthers2 = 0;
+
+        for (var i = 0; i < checkInListWeeklySnapshot.length; i++) {
+          print(checkInListWeeklySnapshot[i].whatMakesYouFeel);
+          if (daysBetween(
+                DateTime.parse(checkInListWeeklySnapshot[i].dateTime),
+                today,
+              ) <
+              7) {
+            if ('Myself' == checkInListWeeklySnapshot[i].whatMakesYouFeel) {
+              percentageValueMyslef = percentageValueMyslef + 1;
+            } else if ('Health' ==
+                checkInListWeeklySnapshot[i].whatMakesYouFeel) {
+              percentageValueHealth = percentageValueHealth + 1;
+            } else if ('Food' ==
+                checkInListWeeklySnapshot[i].whatMakesYouFeel) {
+              percentageValueFood = percentageValueFood + 1;
+            } else if ('Money' ==
+                checkInListWeeklySnapshot[i].whatMakesYouFeel) {
+              percentageValueMoney = percentageValueMoney + 1;
+            } else {
+              percentageValueOthers2 = percentageValueOthers2 + 1;
+            }
+          }
+        }
+
+        var additionOfAllRadial = percentageValueMyslef +
+            percentageValueHealth +
+            percentageValueFood +
+            percentageValueMoney +
+            percentageValueOthers2;
+        radialGraphValueList = [
+          int.parse(((percentageValueMyslef / additionOfAllRadial) * 100)
+              .toStringAsFixed(0)),
+          int.parse(((percentageValueHealth / additionOfAllRadial) * 100)
+              .toStringAsFixed(0)),
+          int.parse(((percentageValueFood / additionOfAllRadial) * 100)
+              .toStringAsFixed(0)),
+          int.parse(((percentageValueMoney / additionOfAllRadial) * 100)
+              .toStringAsFixed(0)),
+          int.parse(((percentageValueOthers2 / additionOfAllRadial) * 100)
+              .toStringAsFixed(0)),
+        ];
+
+        print(radialGraphValueList);
+
         focusOnData = [
-          FocusOn('Myself', 25, darkCyanGreen),
-          FocusOn('Health', 38, palePink),
-          FocusOn('Food', 34, darkModerateBlue3),
-          FocusOn('Money', 52, slightlyDesaturatedViolet),
-          FocusOn('Others', 52, softYellow)
+          FocusOn('Myself', radialGraphValueList[0], palePink),
+          FocusOn('Health', radialGraphValueList[1], moderateCyanLimeGreen),
+          FocusOn('Food', radialGraphValueList[2], veryLightBlue),
+          FocusOn('Money', radialGraphValueList[3], slightlyDesaturatedViolet),
+          FocusOn('Others', radialGraphValueList[4], softYellow)
         ];
       }).then((value) {
         setState(() {

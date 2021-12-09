@@ -126,7 +126,7 @@ Widget buildCheckInList(List<CheckInModel> checkInList, double height,
                                             Container(
                                               width: width * 0.5,
                                               child: AutoSizeText(
-                                                "${checkInObject.thoughts}",
+                                                "${checkInObject.whatMakesYouFeel}",
                                                 textAlign: TextAlign.start,
                                                 maxLines: 1,
                                                 maxFontSize: 16,

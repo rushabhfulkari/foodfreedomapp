@@ -104,27 +104,32 @@ class CheckInDetailsPage extends StatelessWidget {
                       SizedBox(
                         height: 10,
                       ),
-                      titleCheckInDetails("Thoughts"),
-                      SizedBox(
-                        height: 5,
-                      ),
                       checkInObject.thoughts.toString() != ""
-                          ? Container(
-                              width: width * 0.85,
-                              child: AutoSizeText(
-                                "${checkInObject.thoughts}",
-                                textAlign: TextAlign.start,
-                                maxFontSize: 18,
-                                style: TextStyle(
-                                    color: white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                titleCheckInDetails("Thoughts"),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Container(
+                                  width: width * 0.85,
+                                  child: AutoSizeText(
+                                    "${checkInObject.thoughts}",
+                                    textAlign: TextAlign.start,
+                                    maxFontSize: 18,
+                                    style: TextStyle(
+                                        color: white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                              ],
                             )
                           : Container(),
-                      SizedBox(
-                        height: 40,
-                      ),
                       titleCheckInDetails("How was the Day?"),
                       SizedBox(
                         height: 10,
@@ -165,6 +170,7 @@ class CheckInDetailsPage extends StatelessWidget {
                         height: array.length * height * 0.03,
                         child: ListView.builder(
                             itemCount: array.length,
+                            physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (BuildContext context, int index) {
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 5.0),
@@ -184,25 +190,29 @@ class CheckInDetailsPage extends StatelessWidget {
                             }),
                       ),
                       SizedBox(
-                        height: 5,
+                        height: 10,
                       ),
                       checkInObject.iAlsoFeelText.toString() != ""
-                          ? Container(
-                              width: width * 0.85,
-                              child: AutoSizeText(
-                                "${checkInObject.iAlsoFeelText}",
-                                textAlign: TextAlign.start,
-                                maxFontSize: 18,
-                                style: TextStyle(
-                                    color: white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                          ? Column(
+                              children: [
+                                Container(
+                                  width: width * 0.85,
+                                  child: AutoSizeText(
+                                    "${checkInObject.iAlsoFeelText}",
+                                    textAlign: TextAlign.start,
+                                    maxFontSize: 18,
+                                    style: TextStyle(
+                                        color: white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                              ],
                             )
                           : Container(),
-                      SizedBox(
-                        height: 20,
-                      ),
                       titleCheckInDetails("Reasons"),
                       SizedBox(
                         height: 10,

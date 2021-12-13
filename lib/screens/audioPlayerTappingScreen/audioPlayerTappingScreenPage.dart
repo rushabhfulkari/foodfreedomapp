@@ -232,6 +232,7 @@ class _AudioPlayerTappingPageState extends State<AudioPlayerTappingPage> {
     });
 
     audioPlayer.onPlayerCompletion.listen((event) {
+      bgMusicPlayer.stop();
       setState(() {
         _position = _duration;
       });
@@ -515,7 +516,7 @@ class _AudioPlayerTappingPageState extends State<AudioPlayerTappingPage> {
                           Padding(
                             padding: const EdgeInsets.only(right: 5.0),
                             child: AutoSizeText(
-                              "$_duration".substring(2, 7),
+                              "${_duration - _position}".substring(2, 7),
                               style: TextStyle(color: white, fontSize: 15),
                             ),
                           ),
@@ -536,18 +537,20 @@ class _AudioPlayerTappingPageState extends State<AudioPlayerTappingPage> {
                               }
                             }, "Skip Intro"),
                             bottomOptionWidgets(() {
-                              if (speed != 1.5) {
-                                setState(() {
-                                  speed = speed + 0.25;
-                                  audioPlayer.setPlaybackRate(
-                                      playbackRate: speed);
-                                });
-                              } else {
-                                setState(() {
-                                  speed = 0.75;
-                                  audioPlayer.setPlaybackRate(
-                                      playbackRate: speed);
-                                });
+                              if (isPlaying) {
+                                if (speed != 1.5) {
+                                  setState(() {
+                                    speed = speed + 0.25;
+                                    audioPlayer.setPlaybackRate(
+                                        playbackRate: speed);
+                                  });
+                                } else {
+                                  setState(() {
+                                    speed = 0.75;
+                                    audioPlayer.setPlaybackRate(
+                                        playbackRate: speed);
+                                  });
+                                }
                               }
                             }, "$speed" + "x"),
                           ],

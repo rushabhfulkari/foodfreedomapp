@@ -249,8 +249,15 @@ class SettingsPage extends StatelessWidget {
                     tappingActivityList.clear();
                     checkInList.clear();
                     downloadList.clear();
-                    loremIpsumDolo1List.clear();
-                    loremIpsumDolo2List.clear();
+                    makingPeaceWithFoodList.clear();
+                    bodyAcceptanceList.clear();
+                    stressAndAnxietyList.clear();
+                    selfLoveList.clear();
+                    intuitiveEatingList.clear();
+                    mindsetBoosterList.clear();
+                    emotionalReleaseList.clear();
+                    healthAndWellbeingList.clear();
+                    divingDeeperList.clear();
                     firstNameGlobal = '';
                     lastNameGlobal = '';
                     emailGlobal = '';

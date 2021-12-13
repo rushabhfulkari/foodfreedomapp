@@ -44,6 +44,7 @@ dependencies:
   path_provider: ^2.0.4
   webview_flutter:
   syncfusion_flutter_charts: ^19.3.56
+  flutter_datetime_picker:
 
 dev_dependencies:
   flutter_test:
@@ -54,7 +55,7 @@ dev_dependencies:
 # flutter pub run flutter_native_splash:create
 flutter_native_splash:
   background_image: "assets/splashBackground.png"
-  image: assets/logo.png
+  image: assets/logoanimation.gif
 
 # flutter pub run flutter_launcher_icons:main
 flutter_icons:

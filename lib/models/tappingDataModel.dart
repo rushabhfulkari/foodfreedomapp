@@ -48,5 +48,12 @@ class RateIntensityModel {
 
 List<TappingDataModel> favoritesList = [];
 List<TappingDataModel> downloadList = [];
-List<TappingDataModel> loremIpsumDolo1List = [];
-List<TappingDataModel> loremIpsumDolo2List = [];
+List<TappingDataModel> makingPeaceWithFoodList = [];
+List<TappingDataModel> bodyAcceptanceList = [];
+List<TappingDataModel> stressAndAnxietyList = [];
+List<TappingDataModel> selfLoveList = [];
+List<TappingDataModel> intuitiveEatingList = [];
+List<TappingDataModel> mindsetBoosterList = [];
+List<TappingDataModel> emotionalReleaseList = [];
+List<TappingDataModel> healthAndWellbeingList = [];
+List<TappingDataModel> divingDeeperList = [];

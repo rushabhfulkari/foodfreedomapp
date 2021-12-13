@@ -40,12 +40,18 @@ class _TappingPageState extends State<TappingPage>
   }
 
   getTappingData() {
-    print(tappingDataFetched.toString() + "sdjvnaskvnakjdn");
     if (!tappingDataFetched) {
       favoritesList.clear();
       downloadList.clear();
-      loremIpsumDolo1List.clear();
-      loremIpsumDolo2List.clear();
+      makingPeaceWithFoodList.clear();
+      bodyAcceptanceList.clear();
+      stressAndAnxietyList.clear();
+      selfLoveList.clear();
+      intuitiveEatingList.clear();
+      mindsetBoosterList.clear();
+      emotionalReleaseList.clear();
+      healthAndWellbeingList.clear();
+      divingDeeperList.clear();
       refFirebase
           .child('Tapping Data')
           .limitToFirst(200)
@@ -60,21 +66,53 @@ class _TappingPageState extends State<TappingPage>
           }
 
           if (downloadString.contains('$keyTapping')) {
-            // print(downloadString);
-            // print("object");
             if (downloadList.length <= 15) {
               downloadList.add(tappingDataServices(valueTapping, keyTapping));
             }
           }
 
-          if (valueTapping['category'] == "Lorem ipsum dolo 1") {
-            if (loremIpsumDolo1List.length <= 15) {
-              loremIpsumDolo1List
+          if (valueTapping['category'] == "Making Peace With Food") {
+            if (makingPeaceWithFoodList.length <= 15) {
+              makingPeaceWithFoodList
                   .add(tappingDataServices(valueTapping, keyTapping));
             }
-          } else if (valueTapping['category'] == "Lorem ipsum dolo 2") {
-            if (loremIpsumDolo2List.length <= 15) {
-              loremIpsumDolo2List
+          } else if (valueTapping['category'] == "Body Acceptance") {
+            if (bodyAcceptanceList.length <= 15) {
+              bodyAcceptanceList
+                  .add(tappingDataServices(valueTapping, keyTapping));
+            }
+          } else if (valueTapping['category'] == "Stress & Anxiety") {
+            if (stressAndAnxietyList.length <= 15) {
+              stressAndAnxietyList
+                  .add(tappingDataServices(valueTapping, keyTapping));
+            }
+          } else if (valueTapping['category'] == "Self-Love") {
+            if (selfLoveList.length <= 15) {
+              selfLoveList.add(tappingDataServices(valueTapping, keyTapping));
+            }
+          } else if (valueTapping['category'] == "Intuitive Eating") {
+            if (intuitiveEatingList.length <= 15) {
+              intuitiveEatingList
+                  .add(tappingDataServices(valueTapping, keyTapping));
+            }
+          } else if (valueTapping['category'] == "Mindset Booster") {
+            if (mindsetBoosterList.length <= 15) {
+              mindsetBoosterList
+                  .add(tappingDataServices(valueTapping, keyTapping));
+            }
+          } else if (valueTapping['category'] == "Emotional Release") {
+            if (emotionalReleaseList.length <= 15) {
+              emotionalReleaseList
+                  .add(tappingDataServices(valueTapping, keyTapping));
+            }
+          } else if (valueTapping['category'] == "Health & Wellbeing") {
+            if (healthAndWellbeingList.length <= 15) {
+              healthAndWellbeingList
+                  .add(tappingDataServices(valueTapping, keyTapping));
+            }
+          } else if (valueTapping['category'] == "Diving Deeper") {
+            if (divingDeeperList.length <= 15) {
+              divingDeeperList
                   .add(tappingDataServices(valueTapping, keyTapping));
             }
           }
@@ -207,51 +245,307 @@ class _TappingPageState extends State<TappingPage>
                                               ],
                                             )
                                           : Container(),
-                                      listTitleAndSeeAll("Lorem ipsum dolo 1",
-                                          "${loremIpsumDolo1List.length}", () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) => SeeAllPage(
-                                              category: "Lorem ipsum dolo 1",
-                                            ),
-                                          ),
-                                        );
-                                      }, false, null),
-                                      buildHorizontalScrollTappingList(
-                                          loremIpsumDolo1List,
-                                          height,
-                                          width,
-                                          context, (value) {
-                                        setState(() {
-                                          tappingDataFetched = false;
-                                          getSharedPref();
-                                          getTappingData();
-                                        });
-                                      }),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      listTitleAndSeeAll("Lorem ipsum dolo 2",
-                                          "${loremIpsumDolo2List.length}", () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) => SeeAllPage(
-                                              category: "Lorem ipsum dolo 2",
-                                            ),
-                                          ),
-                                        );
-                                      }, false, null),
-                                      buildHorizontalScrollTappingList(
-                                          loremIpsumDolo2List,
-                                          height,
-                                          width,
-                                          context, (value) {
-                                        setState(() {
-                                          tappingDataFetched = false;
-                                          getSharedPref();
-                                          getTappingData();
-                                        });
-                                      }),
+                                      makingPeaceWithFoodList.length != 0
+                                          ? Column(
+                                              children: [
+                                                listTitleAndSeeAll(
+                                                    "Making Peace With Food",
+                                                    "${makingPeaceWithFoodList.length}",
+                                                    () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SeeAllPage(
+                                                        category:
+                                                            "Making Peace With Food",
+                                                      ),
+                                                    ),
+                                                  );
+                                                }, false, null),
+                                                buildHorizontalScrollTappingList(
+                                                    makingPeaceWithFoodList,
+                                                    height,
+                                                    width,
+                                                    context, (value) {
+                                                  setState(() {
+                                                    tappingDataFetched = false;
+                                                    getSharedPref();
+                                                    getTappingData();
+                                                  });
+                                                }),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                              ],
+                                            )
+                                          : Container(),
+                                      bodyAcceptanceList.length != 0
+                                          ? Column(
+                                              children: [
+                                                listTitleAndSeeAll(
+                                                    "Body Acceptance",
+                                                    "${bodyAcceptanceList.length}",
+                                                    () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SeeAllPage(
+                                                        category:
+                                                            "Body Acceptance",
+                                                      ),
+                                                    ),
+                                                  );
+                                                }, false, null),
+                                                buildHorizontalScrollTappingList(
+                                                    bodyAcceptanceList,
+                                                    height,
+                                                    width,
+                                                    context, (value) {
+                                                  setState(() {
+                                                    tappingDataFetched = false;
+                                                    getSharedPref();
+                                                    getTappingData();
+                                                  });
+                                                }),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                              ],
+                                            )
+                                          : Container(),
+                                      stressAndAnxietyList.length != 0
+                                          ? Column(
+                                              children: [
+                                                listTitleAndSeeAll(
+                                                    "Stress & Anxiety",
+                                                    "${stressAndAnxietyList.length}",
+                                                    () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SeeAllPage(
+                                                        category:
+                                                            "Stress & Anxiety",
+                                                      ),
+                                                    ),
+                                                  );
+                                                }, false, null),
+                                                buildHorizontalScrollTappingList(
+                                                    stressAndAnxietyList,
+                                                    height,
+                                                    width,
+                                                    context, (value) {
+                                                  setState(() {
+                                                    tappingDataFetched = false;
+                                                    getSharedPref();
+                                                    getTappingData();
+                                                  });
+                                                }),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                              ],
+                                            )
+                                          : Container(),
+                                      selfLoveList.length != 0
+                                          ? Column(
+                                              children: [
+                                                listTitleAndSeeAll("Self-Love",
+                                                    "${selfLoveList.length}",
+                                                    () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SeeAllPage(
+                                                        category: "Self-Love",
+                                                      ),
+                                                    ),
+                                                  );
+                                                }, false, null),
+                                                buildHorizontalScrollTappingList(
+                                                    selfLoveList,
+                                                    height,
+                                                    width,
+                                                    context, (value) {
+                                                  setState(() {
+                                                    tappingDataFetched = false;
+                                                    getSharedPref();
+                                                    getTappingData();
+                                                  });
+                                                }),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                              ],
+                                            )
+                                          : Container(),
+                                      intuitiveEatingList.length != 0
+                                          ? Column(
+                                              children: [
+                                                listTitleAndSeeAll(
+                                                    "Intuitive Eating",
+                                                    "${intuitiveEatingList.length}",
+                                                    () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SeeAllPage(
+                                                        category:
+                                                            "Intuitive Eating",
+                                                      ),
+                                                    ),
+                                                  );
+                                                }, false, null),
+                                                buildHorizontalScrollTappingList(
+                                                    intuitiveEatingList,
+                                                    height,
+                                                    width,
+                                                    context, (value) {
+                                                  setState(() {
+                                                    tappingDataFetched = false;
+                                                    getSharedPref();
+                                                    getTappingData();
+                                                  });
+                                                }),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                              ],
+                                            )
+                                          : Container(),
+                                      mindsetBoosterList.length != 0
+                                          ? Column(
+                                              children: [
+                                                listTitleAndSeeAll(
+                                                    "Mindset Booster",
+                                                    "${mindsetBoosterList.length}",
+                                                    () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SeeAllPage(
+                                                        category:
+                                                            "Mindset Booster",
+                                                      ),
+                                                    ),
+                                                  );
+                                                }, false, null),
+                                                buildHorizontalScrollTappingList(
+                                                    mindsetBoosterList,
+                                                    height,
+                                                    width,
+                                                    context, (value) {
+                                                  setState(() {
+                                                    tappingDataFetched = false;
+                                                    getSharedPref();
+                                                    getTappingData();
+                                                  });
+                                                }),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                              ],
+                                            )
+                                          : Container(),
+                                      emotionalReleaseList.length != 0
+                                          ? Column(
+                                              children: [
+                                                listTitleAndSeeAll(
+                                                    "Emotional Release",
+                                                    "${emotionalReleaseList.length}",
+                                                    () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SeeAllPage(
+                                                        category:
+                                                            "Emotional Release",
+                                                      ),
+                                                    ),
+                                                  );
+                                                }, false, null),
+                                                buildHorizontalScrollTappingList(
+                                                    emotionalReleaseList,
+                                                    height,
+                                                    width,
+                                                    context, (value) {
+                                                  setState(() {
+                                                    tappingDataFetched = false;
+                                                    getSharedPref();
+                                                    getTappingData();
+                                                  });
+                                                }),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                              ],
+                                            )
+                                          : Container(),
+                                      healthAndWellbeingList.length != 0
+                                          ? Column(
+                                              children: [
+                                                listTitleAndSeeAll(
+                                                    "Health & Wellbeing",
+                                                    "${healthAndWellbeingList.length}",
+                                                    () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SeeAllPage(
+                                                        category:
+                                                            "Health & Wellbeing",
+                                                      ),
+                                                    ),
+                                                  );
+                                                }, false, null),
+                                                buildHorizontalScrollTappingList(
+                                                    healthAndWellbeingList,
+                                                    height,
+                                                    width,
+                                                    context, (value) {
+                                                  setState(() {
+                                                    tappingDataFetched = false;
+                                                    getSharedPref();
+                                                    getTappingData();
+                                                  });
+                                                }),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                              ],
+                                            )
+                                          : Container(),
+                                      divingDeeperList.length != 0
+                                          ? Column(
+                                              children: [
+                                                listTitleAndSeeAll(
+                                                    "Diving Deeper",
+                                                    "${divingDeeperList.length}",
+                                                    () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SeeAllPage(
+                                                        category:
+                                                            "Diving Deeper",
+                                                      ),
+                                                    ),
+                                                  );
+                                                }, false, null),
+                                                buildHorizontalScrollTappingList(
+                                                    divingDeeperList,
+                                                    height,
+                                                    width,
+                                                    context, (value) {
+                                                  setState(() {
+                                                    tappingDataFetched = false;
+                                                    getSharedPref();
+                                                    getTappingData();
+                                                  });
+                                                }),
+                                              ],
+                                            )
+                                          : Container()
                                     ],
                                   ),
                                 )

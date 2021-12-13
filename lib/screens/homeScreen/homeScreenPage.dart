@@ -55,15 +55,15 @@ class _HomePageState extends State<HomePage>
       checkInDone = prefs.getString('checkInDone');
       dataFetched = true;
     });
-    if (affirmation == null) {
-      affirmation = "";
-    }
+
     if (checkInDone == null) {
       setState(() {
         checkInDone = "false";
       });
     }
-    if (dayToday == null || dayToday != "${DateTime.now().day}".toString()) {
+    if (affirmation == null ||
+        dayToday == null ||
+        dayToday != "${DateTime.now().day}".toString()) {
       dayToday = "${DateTime.now().day}".toString();
       prefs.setString('dayToday', "${DateTime.now().day}".toString());
       prefs.setString('checkInDone', "false");
@@ -185,15 +185,11 @@ class _HomePageState extends State<HomePage>
                                     homePageButtons(size.height, size.width,
                                         () {
                                       if (checkInDone == "false") {
-                                        Navigator.of(context)
-                                            .push(
+                                        Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (context) => CheckInPage(),
                                           ),
-                                        )
-                                            .then((value) {
-                                          checkInDone = "true";
-                                        });
+                                        );
                                       } else {
                                         showSnackBar(context,
                                             "Today's Emotional Check-In is Done, Please Come Back Tomorrow");

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:foodfreedomapp/constants/colors.dart';
 import 'package:foodfreedomapp/constants/configs.dart';
@@ -7,6 +8,7 @@ import 'package:foodfreedomapp/constants/widgets.dart';
 import 'package:foodfreedomapp/screens/navigationBar/navigationBar.dart';
 import 'package:foodfreedomapp/screens/signUpScreen/signUpScreenServices.dart';
 import 'package:foodfreedomapp/screens/signUpScreen/signUpScreenWidgets.dart';
+import 'package:foodfreedomapp/screens/webViewScreen/webViewScreenPage.dart';
 import 'package:foodfreedomapp/services/facebookServices.dart';
 import 'package:foodfreedomapp/services/googleServices.dart';
 import 'package:foodfreedomapp/services/snackBar.dart';
@@ -147,7 +149,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         width: size.width * 0.7,
                         child: RichText(
                           text: TextSpan(
-                            children: const <TextSpan>[
+                            children: <TextSpan>[
                               TextSpan(
                                   text: 'I have read and understand the ',
                                   style: TextStyle(
@@ -157,6 +159,16 @@ class _SignUpPageState extends State<SignUpPage> {
                                   )),
                               TextSpan(
                                   text: 'terms of use ',
+                                  recognizer: new TapGestureRecognizer()
+                                    ..onTap = () => Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => WebViewScreen(
+                                              link:
+                                                  "https://www.jasonwinters.coach/terms-conditions-fft-app",
+                                              text: "Terms & Conditions",
+                                            ),
+                                          ),
+                                        ),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
@@ -171,6 +183,16 @@ class _SignUpPageState extends State<SignUpPage> {
                                   )),
                               TextSpan(
                                   text: 'privacy policy',
+                                  recognizer: new TapGestureRecognizer()
+                                    ..onTap = () => Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) => WebViewScreen(
+                                              link:
+                                                  "https://www.jasonwinters.coach/privacy-policy-fft-app",
+                                              text: "Privacy Policy",
+                                            ),
+                                          ),
+                                        ),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Raleway',
